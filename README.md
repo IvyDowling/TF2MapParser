@@ -3,7 +3,7 @@ TF2MapGenerator
 
 A text-based Team Fortress 2 Map Creator
 
-**Current Implementation**
+**Current Implementation
 Running the map generator:
 Open command prompt and navigate to the location of TF2MapGenerator.jar
 type "java -jar TF2MapGenerator.jar {filepath}.txt {arguments}
@@ -28,3 +28,5 @@ xs ys zs    is the size of the spire
 
 To make the map rotationally symmetrical, type:
 mirror
+
+For an example file, check out granaryMidExample.txt
