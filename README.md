@@ -26,5 +26,5 @@ x y z       are the location of the lower left corner of the spire
 xs ys zs    is the size of the spire
 -spires are always rectangles
 
-To make the map mirrored, type:
+To make the map rotationally symmetrical, type:
 mirror
