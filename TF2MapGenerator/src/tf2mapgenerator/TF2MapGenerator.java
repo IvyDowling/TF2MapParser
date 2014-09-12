@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class TF2MapGenerator {
@@ -17,6 +18,7 @@ public class TF2MapGenerator {
 
     private static ArrayList<Spire> spires = new ArrayList<>();
     private static ArrayList<Ramp> ramps = new ArrayList<>();
+    private static ArrayList<Room> rooms = new ArrayList<>();
 
     public static void main(String[] args) throws Exception {
 
@@ -77,29 +79,59 @@ public class TF2MapGenerator {
         int xs = reader.nextInt();
         int ys = reader.nextInt();
         int zs = reader.nextInt();
-        Point point = new Point(xs, ys, zs);
+        Point skybox = new Point(xs, ys, zs);
         //
         int lineCount = 0;
         try {
             while (reader.hasNext()) {
-                lineCount++;
+                ++lineCount;
                 String holder = reader.nextLine();
-                if (holder.trim().equals("")) {
+                holder = holder.trim();
+                if (holder.equals("")) {
                     //skip the whitespace
                 } else if (holder.charAt(0) == '#') {
                     //skip the line because of comment
+                } else if (holder.equalsIgnoreCase("mirror")) {
+                    skybox.setMirror(true);
                 } else {
                     Scanner lineBreaker = new Scanner(holder);
-                    if (lineBreaker.next().equalsIgnoreCase("spire")) {
+                    int[] intParams = new int[7];               // *********LIKELY TO CHANGE**
+                    String[] strParams = new String[2];         // *********BEWARE CONSTANTS**
+
+                    //so lets read all of this in
+                    //and save the ints as ints and the strings as strings
+                    int intCount = 0;
+                    int strCount = 1;
+                    strParams[0] = lineBreaker.next();  //COMMAND NAME ALWAYS GOES FIRST
+                    while (lineBreaker.hasNext()) {
+                        try {
+                            String holdTheWord = lineBreaker.next();
+                            if (canBeInt(holdTheWord)) { // see static method at bottom
+                                intParams[intCount] = Integer.parseInt(holdTheWord);
+                                intCount++;
+                            } else {
+                                strParams[strCount] = holdTheWord;
+                                strCount++;
+                            }
+                        } catch (NumberFormatException n) {
+                            System.out.println("Number Format Exception while parsing ints " + lineCount);
+                            throw n;
+                        }
+                    }
+
+                    if (strParams[0].equalsIgnoreCase("spire")) {
                         //format is xcoord, ycoord, zcoord, xsize, ysize, zsize
-                        spires.add(new Spire(lineBreaker.nextInt(), lineBreaker.nextInt(), lineBreaker.nextInt(), lineBreaker.nextInt(), lineBreaker.nextInt(), lineBreaker.nextInt()));
-                    } else if (lineBreaker.next().equalsIgnoreCase("ramp")) {
-                        ramps.add(new Ramp(lineBreaker.nextInt(), lineBreaker.nextInt(), lineBreaker.nextInt(), lineBreaker.nextInt(), lineBreaker.nextInt(), lineBreaker.nextInt(), lineBreaker.next()));
-                    } else if (lineBreaker.next().equalsIgnoreCase("mirror")) {
-                        point.setMirror(lineBreaker.hasNextBoolean());
+                        spires.add(new Spire(intParams[0], intParams[1], intParams[2], intParams[3], intParams[4], intParams[5]));
+                    } else if (strParams[0].equalsIgnoreCase("ramp")) {
+                        //ramps.add(new Ramp());
+                    } else if (strParams[0].equalsIgnoreCase("room")) {
+                        // format: x y z xs ys zs (thickness)
+                        rooms.add(new Room(intParams[0], intParams[1], intParams[2], intParams[3], intParams[4], intParams[5], intParams[6]));
                     }
                 }
             }
+        } catch (NumberFormatException n) {
+            throw new NumberFormatException("Number Format Exception found when parsing line " + lineCount);
         } catch (Exception e) {
             System.out.println("There is a syntax error in your input file on line " + lineCount);
             throw new IllegalArgumentException("Improper syntax on line " + lineCount);
@@ -107,29 +139,56 @@ public class TF2MapGenerator {
 
         //ADD MIRRORED OBJECTS
         //ALG ==> [((mapSize)-(coordinate))-width]
-        if (point.getMirrored()) {
-            for (int i = 0; i < spires.size(); i++) {
-                spires.add(new Spire((point.getXSize() - spires.get(i).getX() - spires.get(i).getXs()), (point.getYSize() - spires.get(i).getY() - spires.get(i).getYs()), spires.get(i).getZ(), spires.get(i).getXs(), spires.get(i).getYs(), spires.get(i).getZs()));
+        if (skybox.getMirrored()) {
+            int s = spires.size();
+            for (int i = 0; i < s; i++) {
+                spires.add(new Spire(((skybox.getXSize() - spires.get(i).getX()) - spires.get(i).getXs()), ((skybox.getYSize() - spires.get(i).getY()) - spires.get(i).getYs()), spires.get(i).getZ(), spires.get(i).getXs(), spires.get(i).getYs(), spires.get(i).getZs()));
+            }
+            s = rooms.size();
+            for (int i = 0; i < s; i++) {
+                rooms.add(new Room(((skybox.getXSize() - rooms.get(i).getX()) - rooms.get(i).getXs()), ((skybox.getYSize() - rooms.get(i).getY()) - rooms.get(i).getYs()), rooms.get(i).getZ(), rooms.get(i).getXs(), rooms.get(i).getYs(), rooms.get(i).getZs(), rooms.get(i).getDw()));
             }
         }
 
         //
         //BEGIN WRITE
-        writer.print(point.toString());
         int id = 36;
-        for (int i = 0; i < spires.size(); i++) {
-            writer.print(spires.get(i).toString(id));
-            id++;
+        try {
+            writer.print(skybox.getOuput());
+            for (int i = 0; i < spires.size(); i++) {
+                writer.print(spires.get(i).getOutput(id));
+                id++;
+            }
+//            for (int i = 0; i < ramps.size(); i++) {
+//                writer.print(ramps.get(i).getOutput(id));
+//                id++;
+//            }
+            for (int r = 0; r < rooms.size(); r++) {
+                writer.print(rooms.get(r).getOutput(id));
+                id++;
+            }
+            writer.print("}\n"
+                    + "cameras\n"
+                    + "{\n"
+                    + "	\"activecamera\" \"-1\"\n"
+                    + "}\n");
+            writer.close();
+        } catch (Exception ee) {
+            System.out.println("There was an error found during the write-to-file for the file named " + generatedFilename);
+            throw new IOException("Error while writing to file on id " + id);
         }
-        for (int i = 0; i < ramps.size(); i++) {
-            writer.print(ramps.get(i).toString(id));
-            id++;
+        System.out.println("Process Complete!");
+    }
+
+    public static boolean canBeInt(String str) {
+        //hate this method
+        int letsSee;
+        Scanner testInt = new Scanner(str);
+        try {
+            letsSee = testInt.nextInt();
+            return letsSee >= 0 || letsSee < 0;
+        } catch (InputMismatchException imex) {
+            return false;
         }
-        writer.print("}\n"
-                + "cameras\n"
-                + "{\n"
-                + "	\"activecamera\" \"-1\"\n"
-                + "}\n");
-        writer.close();
     }
 }
