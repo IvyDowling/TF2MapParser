@@ -1,0 +1,14 @@
+scale 2
+skybox -1024 -1024 -64 2048 2048 1920
+#THE MIDDLE BIT
+#biggest
+spire -96 0 0 192 32 384
+#middle
+spire -64 32 0 128 32 384
+#smallest
+spire -32 64 0 64 32 384
+#Bottom-most
+room  128 128 512 256 256 304 8
+room  0 0 0 512 512 512 16
+mirror
+#cool kids own lee

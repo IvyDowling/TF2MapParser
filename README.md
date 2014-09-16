@@ -13,20 +13,29 @@ Current argument list:
 -h (for help)
 
 Syntax for creating from a text document
--Every map starts with 3 numbers that define the size of the map
--This makes an enclosed box with the lower left corner at 0 0 0
+-Each doc can start with either the scale that the map should use, or the skybox.
+-Every doc must include a skybox declaration, but scale is optional
+scale 2
+skybox x y z xs ys zs
 
-x y z
-
-To make a spire, type:
-
+#To make a spire, type:
 spire x y z xs ys zs
 
-x y z       are the location of the lower left corner of the spire
-xs ys zs    is the size of the spire
--spires are always rectangles
+#To make a room, type:
+room x y z xs ys zs thickness-of-walls
 
-To make the map rotationally symmetrical, type:
+#To make the map rotationally symmetrical, type:
 mirror
 
-For an example file, check out granaryMidExample.txt
+SPIRES
+- Are always rectangles
+- Are ideally used as barriers and terrain instead of walls
+- defined by their x y z coordinate and their xs ys zs volume
+
+ROOMS
+- Are defined by their x y z outside coordinates,
+	their size xs ys zs, and the thickness of the walls
+- Currently are closed, but in the future doors and wall deletion will be added.
+	-workaround- I usually just delete the wall in Hammer before I compile...
+
+For an example file, check out theTestor.txt

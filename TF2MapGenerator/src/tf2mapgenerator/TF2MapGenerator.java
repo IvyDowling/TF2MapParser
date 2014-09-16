@@ -84,13 +84,13 @@ public class TF2MapGenerator {
             scale = reader.nextInt();
             lineCount++;
             if (reader.next().equalsIgnoreCase("skybox")) {
-                skybox = new Skybox(reader.nextInt(), reader.nextInt(), reader.nextInt(), reader.nextInt(), reader.nextInt(), reader.nextInt());
+                skybox = new Skybox((scale)*reader.nextInt(), (scale)*reader.nextInt(), (scale)*reader.nextInt(), (scale)*reader.nextInt(), (scale)*reader.nextInt(), (scale)*reader.nextInt());
             } else {
                 throw new Exception("Syntax error in skybox declaration Line " + lineCount);
             }
         } else {
             if (reader.next().equalsIgnoreCase("skybox")) {
-                skybox = new Skybox(reader.nextInt(), reader.nextInt(), reader.nextInt(), reader.nextInt(), reader.nextInt(), reader.nextInt());
+                skybox = new Skybox((scale)*reader.nextInt(), (scale)*reader.nextInt(), (scale)*reader.nextInt(), (scale)*reader.nextInt(), (scale)*reader.nextInt(), (scale)*reader.nextInt());
             } else {
                 throw new Exception("Syntax error in skybox declaration Line " + lineCount);
             }
