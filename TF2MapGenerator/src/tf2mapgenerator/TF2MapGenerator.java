@@ -80,19 +80,20 @@ public class TF2MapGenerator {
         //FIRST LINE CHECK GOES HERE
         int lineCount = 0;
         Skybox skybox;
-        if (reader.next().equalsIgnoreCase("scale")) {
+        String firstString = reader.next();
+        if (firstString.equalsIgnoreCase("scale")) {
             scale = reader.nextInt();
             lineCount++;
             if (reader.next().equalsIgnoreCase("skybox")) {
                 skybox = new Skybox((scale)*reader.nextInt(), (scale)*reader.nextInt(), (scale)*reader.nextInt(), (scale)*reader.nextInt(), (scale)*reader.nextInt(), (scale)*reader.nextInt());
             } else {
-                throw new Exception("Syntax error in skybox declaration Line " + lineCount);
+                throw new Exception("\nSyntax error in skybox declaration Line " + lineCount);
             }
         } else {
-            if (reader.next().equalsIgnoreCase("skybox")) {
+            if (firstString.equalsIgnoreCase("skybox")) {
                 skybox = new Skybox((scale)*reader.nextInt(), (scale)*reader.nextInt(), (scale)*reader.nextInt(), (scale)*reader.nextInt(), (scale)*reader.nextInt(), (scale)*reader.nextInt());
             } else {
-                throw new Exception("Syntax error in skybox declaration Line " + lineCount);
+                throw new Exception("\nSyntax error in skybox declaration Line " + lineCount);
             }
         }
         lineCount++;
@@ -157,11 +158,11 @@ public class TF2MapGenerator {
         if (skybox.getMirrored()) {
             int s = spires.size();
             for (int i = 0; i < s; i++) {
-                spires.add(new Spire((skybox.getX() + (skybox.getXSize()/2)) - (Math.abs(spires.get(i).getX())), (skybox.getY() + (skybox.getYSize()/2)) - (Math.abs(spires.get(i).getY()) + spires.get(i).getYs()), spires.get(i).getZ(), spires.get(i).getXs(), spires.get(i).getYs(), spires.get(i).getZs()));
+                spires.add(new Spire((skybox.getX()) + (skybox.getXSize() - (spires.get(i).getX() + spires.get(i).getXs())), (skybox.getY()) + (skybox.getYSize() - (spires.get(i).getY() + spires.get(i).getYs())), spires.get(i).getZ(), spires.get(i).getXs(), spires.get(i).getYs(), spires.get(i).getZs()));
             }
             s = rooms.size();
             for (int i = 0; i < s; i++) {
-                rooms.add(new Room((skybox.getX() + (skybox.getXSize()/2)) - (Math.abs(rooms.get(i).getX()) + rooms.get(i).getXs()), (skybox.getY() + (skybox.getYSize()/2)) - (Math.abs(rooms.get(i).getY()) + rooms.get(i).getYs()), rooms.get(i).getZ(), rooms.get(i).getXs(), rooms.get(i).getYs(), rooms.get(i).getZs(), rooms.get(i).getDw()));
+                rooms.add(new Room((skybox.getX()) + (skybox.getXSize() - (rooms.get(i).getX() + rooms.get(i).getXs())), (skybox.getY()) + (skybox.getYSize() - (rooms.get(i).getY() + rooms.get(i).getYs())), rooms.get(i).getZ(), rooms.get(i).getXs(), rooms.get(i).getYs(), rooms.get(i).getZs(), rooms.get(i).getDw()));
             }
         }
 

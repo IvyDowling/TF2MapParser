@@ -36,6 +36,7 @@ public class Skybox {
     public int getZSize() {
         return zs;
     }
+
     public int getX() {
         return x0;
     }
@@ -49,9 +50,6 @@ public class Skybox {
     }
 
     public String getOutput(int id) {
-
-        z = z;
-        zs = dw;
 
         String out = "versioninfo\n"
                 + "{\n"
@@ -85,6 +83,9 @@ public class Skybox {
         //  SOLID 1 -- BOTTOM -- (-z)
         //
 
+        z = z - dw;
+        zs = dw;
+        
         out += "solid\n"
                 + "	{\n"
                 + "		\"id\" \" " + (id++) + "\"\n"
@@ -177,7 +178,7 @@ public class Skybox {
         ys = xs0;
         zs = zs0;
 
-        z = z + (zs - dw);
+        z = z + (zs);
         zs = dw;        //reset to req value
 
         out += "solid\n"
@@ -464,6 +465,7 @@ public class Skybox {
 
         y = y + ys;
         ys = dw;
+        
         out += "solid\n"
                 + "	{\n"
                 + "		\"id\" \"" + (id++) + "\"\n"
