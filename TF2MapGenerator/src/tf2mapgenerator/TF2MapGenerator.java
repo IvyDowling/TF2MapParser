@@ -19,6 +19,8 @@ public class TF2MapGenerator {
     private static ArrayList<Spire> spires = new ArrayList<>();
     private static ArrayList<Ramp> ramps = new ArrayList<>();
     private static ArrayList<Room> rooms = new ArrayList<>();
+    private static ArrayList<Skybox> skyboxes = new ArrayList<>();
+    private static int scale = 1;
 
     public static void main(String[] args) throws Exception {
 
@@ -76,15 +78,28 @@ public class TF2MapGenerator {
         //MAIN SCANNING LOOP
         //
         //FIRST LINE CHECK GOES HERE
-        int xs = reader.nextInt();
-        int ys = reader.nextInt();
-        int zs = reader.nextInt();
-        Point skybox = new Point(xs, ys, zs);
-        //
         int lineCount = 0;
+        Skybox skybox;
+        if (reader.next().equalsIgnoreCase("scale")) {
+            scale = reader.nextInt();
+            lineCount++;
+            if (reader.next().equalsIgnoreCase("skybox")) {
+                skybox = new Skybox(reader.nextInt(), reader.nextInt(), reader.nextInt(), reader.nextInt(), reader.nextInt(), reader.nextInt());
+            } else {
+                throw new Exception("Syntax error in skybox declaration Line " + lineCount);
+            }
+        } else {
+            if (reader.next().equalsIgnoreCase("skybox")) {
+                skybox = new Skybox(reader.nextInt(), reader.nextInt(), reader.nextInt(), reader.nextInt(), reader.nextInt(), reader.nextInt());
+            } else {
+                throw new Exception("Syntax error in skybox declaration Line " + lineCount);
+            }
+        }
+        lineCount++;
+        //
         try {
             while (reader.hasNext()) {
-                ++lineCount;
+                lineCount++;
                 String holder = reader.nextLine();
                 holder = holder.trim();
                 if (holder.equals("")) {
@@ -121,12 +136,12 @@ public class TF2MapGenerator {
 
                     if (strParams[0].equalsIgnoreCase("spire")) {
                         //format is xcoord, ycoord, zcoord, xsize, ysize, zsize
-                        spires.add(new Spire(intParams[0], intParams[1], intParams[2], intParams[3], intParams[4], intParams[5]));
+                        spires.add(new Spire((scale)*intParams[0], (scale)*intParams[1], (scale)*intParams[2], (scale)*intParams[3], (scale)*intParams[4], (scale)*intParams[5]));
                     } else if (strParams[0].equalsIgnoreCase("ramp")) {
                         //ramps.add(new Ramp());
                     } else if (strParams[0].equalsIgnoreCase("room")) {
                         // format: x y z xs ys zs (thickness)
-                        rooms.add(new Room(intParams[0], intParams[1], intParams[2], intParams[3], intParams[4], intParams[5], intParams[6]));
+                        rooms.add(new Room((scale)*intParams[0], (scale)*intParams[1], (scale)*intParams[2], (scale)*intParams[3], (scale)*intParams[4], (scale)*intParams[5], (scale)*intParams[6]));
                     }
                 }
             }
@@ -138,23 +153,23 @@ public class TF2MapGenerator {
         }
 
         //ADD MIRRORED OBJECTS
-        //ALG ==> [((mapSize)-(coordinate))-width]
+        //ALG ==> [skyboxSize -(abs)|coordinate| - width] + skyboxCoord
         if (skybox.getMirrored()) {
             int s = spires.size();
             for (int i = 0; i < s; i++) {
-                spires.add(new Spire(((skybox.getXSize() - spires.get(i).getX()) - spires.get(i).getXs()), ((skybox.getYSize() - spires.get(i).getY()) - spires.get(i).getYs()), spires.get(i).getZ(), spires.get(i).getXs(), spires.get(i).getYs(), spires.get(i).getZs()));
+                spires.add(new Spire((skybox.getX() + (skybox.getXSize()/2)) - (Math.abs(spires.get(i).getX())), (skybox.getY() + (skybox.getYSize()/2)) - (Math.abs(spires.get(i).getY()) + spires.get(i).getYs()), spires.get(i).getZ(), spires.get(i).getXs(), spires.get(i).getYs(), spires.get(i).getZs()));
             }
             s = rooms.size();
             for (int i = 0; i < s; i++) {
-                rooms.add(new Room(((skybox.getXSize() - rooms.get(i).getX()) - rooms.get(i).getXs()), ((skybox.getYSize() - rooms.get(i).getY()) - rooms.get(i).getYs()), rooms.get(i).getZ(), rooms.get(i).getXs(), rooms.get(i).getYs(), rooms.get(i).getZs(), rooms.get(i).getDw()));
+                rooms.add(new Room((skybox.getX() + (skybox.getXSize()/2)) - (Math.abs(rooms.get(i).getX()) + rooms.get(i).getXs()), (skybox.getY() + (skybox.getYSize()/2)) - (Math.abs(rooms.get(i).getY()) + rooms.get(i).getYs()), rooms.get(i).getZ(), rooms.get(i).getXs(), rooms.get(i).getYs(), rooms.get(i).getZs(), rooms.get(i).getDw()));
             }
         }
 
         //
         //BEGIN WRITE
-        int id = 36;
+        int id = 0;
         try {
-            writer.print(skybox.getOuput());
+            writer.print(skybox.getOutput(id));
             for (int i = 0; i < spires.size(); i++) {
                 writer.print(spires.get(i).getOutput(id));
                 id++;
@@ -177,7 +192,7 @@ public class TF2MapGenerator {
             System.out.println("There was an error found during the write-to-file for the file named " + generatedFilename);
             throw new IOException("Error while writing to file on id " + id);
         }
-        System.out.println("Process Complete!");
+        System.out.println("\nProcess Complete!");
     }
 
     public static boolean canBeInt(String str) {
