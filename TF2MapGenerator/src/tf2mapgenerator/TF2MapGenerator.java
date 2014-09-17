@@ -16,9 +16,6 @@ public class TF2MapGenerator {
     private static Scanner reader;
     private static PrintWriter writer;
 
-    private static ArrayList<Spire> spires = new ArrayList<>();
-    private static ArrayList<Ramp> ramps = new ArrayList<>();
-    private static ArrayList<Room> rooms = new ArrayList<>();
     private static ArrayList<Skybox> skyboxes = new ArrayList<>();
     private static int scale = 1;
 
@@ -137,12 +134,12 @@ public class TF2MapGenerator {
 
                     if (strParams[0].equalsIgnoreCase("spire")) {
                         //format is xcoord, ycoord, zcoord, xsize, ysize, zsize
-                        spires.add(new Spire((scale)*intParams[0], (scale)*intParams[1], (scale)*intParams[2], (scale)*intParams[3], (scale)*intParams[4], (scale)*intParams[5]));
+                        skybox.addSpire(new Spire((scale)*intParams[0], (scale)*intParams[1], (scale)*intParams[2], (scale)*intParams[3], (scale)*intParams[4], (scale)*intParams[5]));
                     } else if (strParams[0].equalsIgnoreCase("ramp")) {
                         //ramps.add(new Ramp());
                     } else if (strParams[0].equalsIgnoreCase("room")) {
                         // format: x y z xs ys zs (thickness)
-                        rooms.add(new Room((scale)*intParams[0], (scale)*intParams[1], (scale)*intParams[2], (scale)*intParams[3], (scale)*intParams[4], (scale)*intParams[5], (scale)*intParams[6]));
+                        skybox.addRoom(new Room((scale)*intParams[0], (scale)*intParams[1], (scale)*intParams[2], (scale)*intParams[3], (scale)*intParams[4], (scale)*intParams[5], (scale)*intParams[6]));
                     }
                 }
             }
@@ -156,13 +153,13 @@ public class TF2MapGenerator {
         //ADD MIRRORED OBJECTS
         //ALG ==> [skyboxSize -(abs)|coordinate| - width] + skyboxCoord
         if (skybox.getMirrored()) {
-            int s = spires.size();
+            int s = skybox.getSpireSize();
             for (int i = 0; i < s; i++) {
-                spires.add(new Spire((skybox.getX()) + (skybox.getXSize() - (spires.get(i).getX() + spires.get(i).getXs())), (skybox.getY()) + (skybox.getYSize() - (spires.get(i).getY() + spires.get(i).getYs())), spires.get(i).getZ(), spires.get(i).getXs(), spires.get(i).getYs(), spires.get(i).getZs()));
+                skybox.addSpire(new Spire((skybox.getX()) + (skybox.getXSize() - (skybox.getSpires().get(i).getX() + skybox.getSpires().get(i).getXs())), (skybox.getY()) + (skybox.getYSize() - (skybox.getSpires().get(i).getY() + skybox.getSpires().get(i).getYs())), skybox.getSpires().get(i).getZ(), skybox.getSpires().get(i).getXs(), skybox.getSpires().get(i).getYs(), skybox.getSpires().get(i).getZs()));
             }
-            s = rooms.size();
+            s = skybox.getRoomsSize();
             for (int i = 0; i < s; i++) {
-                rooms.add(new Room((skybox.getX()) + (skybox.getXSize() - (rooms.get(i).getX() + rooms.get(i).getXs())), (skybox.getY()) + (skybox.getYSize() - (rooms.get(i).getY() + rooms.get(i).getYs())), rooms.get(i).getZ(), rooms.get(i).getXs(), rooms.get(i).getYs(), rooms.get(i).getZs(), rooms.get(i).getDw()));
+                skybox.addRoom(new Room((skybox.getX()) + (skybox.getXSize() - (skybox.getRooms().get(i).getX() + skybox.getRooms().get(i).getXs())), (skybox.getY()) + (skybox.getYSize() - (skybox.getRooms().get(i).getY() + skybox.getRooms().get(i).getYs())), skybox.getRooms().get(i).getZ(), skybox.getRooms().get(i).getXs(), skybox.getRooms().get(i).getYs(), skybox.getRooms().get(i).getZs(), skybox.getRooms().get(i).getDw()));
             }
         }
 
@@ -171,16 +168,16 @@ public class TF2MapGenerator {
         int id = 0;
         try {
             writer.print(skybox.getOutput(id));
-            for (int i = 0; i < spires.size(); i++) {
-                writer.print(spires.get(i).getOutput(id));
+            for (int i = 0; i < skybox.getSpireSize(); i++) {
+                writer.print(skybox.getSpires().get(i).getOutput(id));
                 id++;
             }
 //            for (int i = 0; i < ramps.size(); i++) {
 //                writer.print(ramps.get(i).getOutput(id));
 //                id++;
 //            }
-            for (int r = 0; r < rooms.size(); r++) {
-                writer.print(rooms.get(r).getOutput(id));
+            for (int r = 0; r < skybox.getRoomsSize(); r++) {
+                writer.print(skybox.getRooms().get(r).getOutput(id));
                 id++;
             }
             writer.print("}\n"

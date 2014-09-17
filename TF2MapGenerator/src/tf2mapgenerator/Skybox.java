@@ -1,5 +1,7 @@
 package tf2mapgenerator;
 
+import java.util.ArrayList;
+
 public class Skybox {
 
     private int xs, ys, zs, xs0, ys0, zs0;
@@ -8,6 +10,10 @@ public class Skybox {
 
     private boolean mirrored;
 
+    private ArrayList<Spire> spires = new ArrayList<>();
+    private ArrayList<Ramp> ramps = new ArrayList<>();
+    private ArrayList<Room> rooms = new ArrayList<>();
+
     public Skybox(int xcoord, int ycoord, int zcoord, int l, int w, int h) {
         x = x0 = xcoord;
         y = y0 = ycoord;
@@ -15,38 +21,6 @@ public class Skybox {
         xs = xs0 = l;
         ys = ys0 = w;
         zs = zs0 = h;
-    }
-
-    public boolean getMirrored() {
-        return mirrored;
-    }
-
-    public void setMirror(boolean mir) {
-        mirrored = mir;
-    }
-
-    public int getXSize() {
-        return xs;
-    }
-
-    public int getYSize() {
-        return ys;
-    }
-
-    public int getZSize() {
-        return zs;
-    }
-
-    public int getX() {
-        return x0;
-    }
-
-    public int getY() {
-        return y0;
-    }
-
-    public int getZ() {
-        return z0;
     }
 
     public String getOutput(int id) {
@@ -80,12 +54,18 @@ public class Skybox {
                 + "	\"detailvbsp\" \"detail.vbsp\"\n"
                 + "	\"detailmaterial\" \"detail/detailsprites\"\n";
         //
-        //  SOLID 1 -- BOTTOM -- (-z)
+        //  SOLID 1 -- TOP -- (+z)
         //
-
-        z = z - dw;
-        zs = dw;
+        x = x0;
+        y = y0;
+        z = z0;
+        xs = xs0;
+        ys = xs0;
+        zs = zs0;
         
+        z = z + zs;
+        zs = dw;
+
         out += "solid\n"
                 + "	{\n"
                 + "		\"id\" \" " + (id++) + "\"\n"
@@ -169,7 +149,7 @@ public class Skybox {
                 + "		}\n"
                 + "	}";
         //
-        //  SOLID 2 -- TOP -- (+z)
+        //  SOLID 2 -- BOTTOM -- (-z)
         //
         x = x0;
         y = y0;
@@ -178,7 +158,7 @@ public class Skybox {
         ys = xs0;
         zs = zs0;
 
-        z = z + (zs);
+        z = z - dw;
         zs = dw;        //reset to req value
 
         out += "solid\n"
@@ -465,7 +445,7 @@ public class Skybox {
 
         y = y + ys;
         ys = dw;
-        
+
         out += "solid\n"
                 + "	{\n"
                 + "		\"id\" \"" + (id++) + "\"\n"
@@ -549,7 +529,7 @@ public class Skybox {
                 + "		}\n"
                 + "	}";
         //
-        //  SOLID 6
+        //  SOLID 6 (-y)
         //
         x = x0;
         y = y0;
@@ -654,4 +634,77 @@ public class Skybox {
         return out;
 
     }
+
+    //
+    // ARRAY LISTS
+    //
+    public ArrayList<Spire> getSpires() {
+        return spires;
+    }
+
+    public ArrayList<Ramp> getRamps() {
+        return ramps;
+    }
+
+    public ArrayList<Room> getRooms() {
+        return rooms;
+    }
+
+    public int getSpireSize() {
+        return spires.size();
+    }
+
+    public int getRampSize() {
+        return ramps.size();
+    }
+
+    public int getRoomsSize() {
+        return rooms.size();
+    }
+
+    public void addSpire(Spire spire) {
+        spires.add(spire);
+    }
+
+    public void addRamp(Ramp ramp) {
+        ramps.add(ramp);
+    }
+
+    public void addRoom(Room room) {
+        rooms.add(room);
+    }
+
+    //ENDING HERE
+    public boolean getMirrored() {
+        return mirrored;
+    }
+
+    public void setMirror(boolean mir) {
+        mirrored = mir;
+    }
+
+    public int getXSize() {
+        return xs;
+    }
+
+    public int getYSize() {
+        return ys;
+    }
+
+    public int getZSize() {
+        return zs;
+    }
+
+    public int getX() {
+        return x0;
+    }
+
+    public int getY() {
+        return y0;
+    }
+
+    public int getZ() {
+        return z0;
+    }
+
 }
