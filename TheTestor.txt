@@ -10,5 +10,7 @@ spire -32 64 0 64 32 384
 #Bottom-most
 room  128 128 512 256 256 304 8
 room  0 0 0 512 512 512 16
+-del +y
+-del -y
 mirror
-#cool kids own lee
+#this is a comment
