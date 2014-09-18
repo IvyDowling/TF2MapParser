@@ -41,7 +41,7 @@ public class TF2MapGenerator {
             throw new Exception("No build-file given.");
         }
 
-        //Let's take a look at that file then
+        //Let'initKill take a look at that file then
         try {
             reader = new Scanner(new File(loadPath));
         } catch (FileNotFoundException e) {
@@ -82,13 +82,13 @@ public class TF2MapGenerator {
             scale = reader.nextInt();
             lineCount++;
             if (reader.next().equalsIgnoreCase("skybox")) {
-                skybox = new Skybox((scale)*reader.nextInt(), (scale)*reader.nextInt(), (scale)*reader.nextInt(), (scale)*reader.nextInt(), (scale)*reader.nextInt(), (scale)*reader.nextInt());
+                skybox = new Skybox((scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt());
             } else {
                 throw new Exception("\nSyntax error in skybox declaration Line " + lineCount);
             }
         } else {
             if (firstString.equalsIgnoreCase("skybox")) {
-                skybox = new Skybox((scale)*reader.nextInt(), (scale)*reader.nextInt(), (scale)*reader.nextInt(), (scale)*reader.nextInt(), (scale)*reader.nextInt(), (scale)*reader.nextInt());
+                skybox = new Skybox((scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt());
             } else {
                 throw new Exception("\nSyntax error in skybox declaration Line " + lineCount);
             }
@@ -108,8 +108,8 @@ public class TF2MapGenerator {
                     skybox.setMirror(true);
                 } else {
                     Scanner lineBreaker = new Scanner(holder);
-                    int[] intParams = new int[7];               // *********LIKELY TO CHANGE**
-                    String[] strParams = new String[2];         // *********BEWARE CONSTANTS**
+                    int[] intParams = new int[7];                       // *********LIKELY TO CHANGE**
+                    String[] strParams = new String[2];                 // *********BEWARE CONSTANTS**
 
                     //so lets read all of this in
                     //and save the ints as ints and the strings as strings
@@ -134,51 +134,77 @@ public class TF2MapGenerator {
 
                     if (strParams[0].equalsIgnoreCase("spire")) {
                         //format is xcoord, ycoord, zcoord, xsize, ysize, zsize
-                        skybox.addSpire(new Spire((scale)*intParams[0], (scale)*intParams[1], (scale)*intParams[2], (scale)*intParams[3], (scale)*intParams[4], (scale)*intParams[5]));
+                        skybox.addSpire(new Spire((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
                     } else if (strParams[0].equalsIgnoreCase("ramp")) {
                         //ramps.add(new Ramp());
                     } else if (strParams[0].equalsIgnoreCase("room")) {
                         // format: x y z xs ys zs (thickness)
-                        skybox.addRoom(new Room((scale)*intParams[0], (scale)*intParams[1], (scale)*intParams[2], (scale)*intParams[3], (scale)*intParams[4], (scale)*intParams[5], (scale)*intParams[6]));
+                        skybox.addRoom(new Room((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5], (scale) * intParams[6]));
+                    } else if (strParams[0].equalsIgnoreCase("-del")) {
+                        skybox.getRooms().get(skybox.getRoomsSize() - 1).deleteWall(strParams[1]);  //roomsSize - 1 to get last value
+                    } else if (strParams[0].equalsIgnoreCase("-door")) {
+                        System.out.println("\nDoors aren't working yet\n");
                     }
                 }
             }
         } catch (NumberFormatException n) {
-            throw new NumberFormatException("Number Format Exception found when parsing line " + lineCount);
+            throw new NumberFormatException("Number Format Exception found when parsing line " + (lineCount - 1) + "\n");
         } catch (Exception e) {
-            System.out.println("There is a syntax error in your input file on line " + lineCount);
-            throw new IllegalArgumentException("Improper syntax on line " + lineCount);
+            System.out.println("There is a syntax error in your input file on line " + (lineCount - 1) + "\n");
+            throw new IllegalArgumentException("Improper syntax on line " + (lineCount - 1) + "\n");
         }
+
+        //CHECK FOR EMPTY ONES AND KILLS
+        int initKill = skybox.getRoomsSize();
+        for (int i = 0; i < initKill; i++) {
+            for (int w = 0; w < skybox.getRooms().get(i).getWalls().size(); w++) {
+                //lets see if this room has any walls that need to die
+                if (skybox.getRooms().get(i).getWalls().get(w).getKill()) {
+                    skybox.getRooms().get(i).getWalls().remove(w);
+                    w = w - 1; //ACCOUNT FOR ARRAYLIST SHIFT
+                }
+            }
+        }
+        initKill = skybox.getSpireSize();
+        for (int i = 0; i < skybox.getSpireSize(); i++) {
+            if (skybox.getSpires().get(i).getKill()) {
+                skybox.getSpires().remove(i);
+                i = i - 1; //ARRAYLIST SHIFT
+            }
+        }
+        //end
 
         //ADD MIRRORED OBJECTS
         //ALG ==> [skyboxSize -(abs)|coordinate| - width] + skyboxCoord
         if (skybox.getMirrored()) {
-            int s = skybox.getSpireSize();
-            for (int i = 0; i < s; i++) {
-                skybox.addSpire(new Spire((skybox.getX()) + (skybox.getXSize() - (skybox.getSpires().get(i).getX() + skybox.getSpires().get(i).getXs())), (skybox.getY()) + (skybox.getYSize() - (skybox.getSpires().get(i).getY() + skybox.getSpires().get(i).getYs())), skybox.getSpires().get(i).getZ(), skybox.getSpires().get(i).getXs(), skybox.getSpires().get(i).getYs(), skybox.getSpires().get(i).getZs()));
+            int initMirror = skybox.getSpireSize();
+            for (int i = 0; i < initMirror; i++) {
+//                skybox.addSpire(new Spire((skybox.getX()) + (skybox.getXSize() - (skybox.getSpires().get(i).getX() + skybox.getSpires().get(i).getXs())), (skybox.getY()) + (skybox.getYSize() - (skybox.getSpires().get(i).getY() + skybox.getSpires().get(i).getYs())), skybox.getSpires().get(i).getZ(), skybox.getSpires().get(i).getXs(), skybox.getSpires().get(i).getYs(), skybox.getSpires().get(i).getZs()));
+                skybox.addSpire(skybox.getSpires().get(i).getMirror(skybox.getX() + skybox.getXSize(), skybox.getY() + skybox.getYSize()));
             }
-            s = skybox.getRoomsSize();
-            for (int i = 0; i < s; i++) {
-                skybox.addRoom(new Room((skybox.getX()) + (skybox.getXSize() - (skybox.getRooms().get(i).getX() + skybox.getRooms().get(i).getXs())), (skybox.getY()) + (skybox.getYSize() - (skybox.getRooms().get(i).getY() + skybox.getRooms().get(i).getYs())), skybox.getRooms().get(i).getZ(), skybox.getRooms().get(i).getXs(), skybox.getRooms().get(i).getYs(), skybox.getRooms().get(i).getZs(), skybox.getRooms().get(i).getDw()));
+            initMirror = skybox.getRoomsSize();
+            for (int i = 0; i < initMirror; i++) {
+//                skybox.addRoom(new Room((skybox.getX()) + (skybox.getXSize() - (skybox.getRooms().get(i).getX() + skybox.getRooms().get(i).getXs())), (skybox.getY()) + (skybox.getYSize() - (skybox.getRooms().get(i).getY() + skybox.getRooms().get(i).getYs())), skybox.getRooms().get(i).getZ(), skybox.getRooms().get(i).getXs(), skybox.getRooms().get(i).getYs(), skybox.getRooms().get(i).getZs(), skybox.getRooms().get(i).getDw()));
+                skybox.addRoom(new Room(skybox.getRooms().get(i).getMirroredRoom(skybox.getX() + skybox.getXSize(), skybox.getY() + skybox.getYSize())));
             }
         }
 
-        //
         //BEGIN WRITE
-        int id = 0;
+        int id = 1;         //PENDING INVESTIGATION (not sure if these even matter...)
         try {
             writer.print(skybox.getOutput(id));
+            id = 44;  //number of skybox ids + 1
             for (int i = 0; i < skybox.getSpireSize(); i++) {
                 writer.print(skybox.getSpires().get(i).getOutput(id));
-                id++;
+                id = id + 6;
             }
 //            for (int i = 0; i < ramps.size(); i++) {
-//                writer.print(ramps.get(i).getOutput(id));
+//                writer.print(skybox.getRamps.get(i).getOutput(id));
 //                id++;
 //            }
             for (int r = 0; r < skybox.getRoomsSize(); r++) {
                 writer.print(skybox.getRooms().get(r).getOutput(id));
-                id++;
+                id = id + 6;
             }
             writer.print("}\n"
                     + "cameras\n"
