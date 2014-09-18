@@ -23,6 +23,10 @@ spire x y z xs ys zs
 
 #To make a room, type:
 room x y z xs ys zs thickness-of-walls
+#Each room can have walls deleted by typing
+-del wall
+#where wall is the face that will be deleted, (sign)(axis)
+# +z: top -z: bottom +x: left -x: right +y: back -y: front
 
 #To make the map rotationally symmetrical, type:
 mirror
@@ -35,7 +39,6 @@ SPIRES
 ROOMS
 - Are defined by their x y z outside coordinates,
 	their size xs ys zs, and the thickness of the walls
-- Currently are closed, but in the future doors and wall deletion will be added.
-	-workaround- I usually just delete the wall in Hammer before I compile...
+- Do not yet support doors, but soon will.
 
 For an example file, check out theTestor.txt
