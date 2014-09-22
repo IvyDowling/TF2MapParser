@@ -12,11 +12,13 @@ Current argument list:
 -o {desired-map-name}
 -h (for help)
 
-Syntax for creating from a text document
--Each doc can start with either the scale that the map should use, or the skybox.
--Every doc must include a skybox declaration, but scale is optional
+#syntax
+every element takes only one line, and additions to the previous element (doors, walls, etc) are on following lines beginning with -'command'
+#scale can be set on the first line with the command
 scale a
+#the skybox is made by typing,
 skybox x y z xs ys zs
+every map must have a skybox before any elements are declared
 
 #To make a spire, type:
 spire x y z xs ys zs
