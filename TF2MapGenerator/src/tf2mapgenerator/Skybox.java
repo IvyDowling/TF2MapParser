@@ -9,6 +9,7 @@ public class Skybox {
     private int dw = 64;     //Thickness of skybox walls
 
     private boolean mirrored;
+    private String additionalOutput;
 
     private ArrayList<Spire> spires = new ArrayList<>();
     private ArrayList<Ramp> ramps = new ArrayList<>();
@@ -21,6 +22,16 @@ public class Skybox {
         xs = xs0 = l;
         ys = ys0 = w;
         zs = zs0 = h;
+        additionalOutput = "";
+    }
+    
+    public String getAdditionalOutput(){
+        //method for rooms lights and other skybox related content
+        return additionalOutput;
+    }
+    
+    public void additionalOutput(String add){
+        additionalOutput += add;
     }
 
     public String getOutput(int id) {
@@ -49,7 +60,7 @@ public class Skybox {
                 + "	\"id\" \"" + (id++) + "\"\n"
                 + "	\"mapversion\" \"1\"\n"
                 + "	\"classname\" \"worldspawn\"\n"
-                + "	\"skyname\" \"sky_day01_01\"\n"
+                + "	\"skyname\" \"sky_trainyard_01\"\n"
                 + "	\"maxpropscreenwidth\" \"-1\"\n"
                 + "	\"detailvbsp\" \"detail.vbsp\"\n"
                 + "	\"detailmaterial\" \"detail/detailsprites\"\n";
@@ -62,7 +73,7 @@ public class Skybox {
         xs = xs0;
         ys = xs0;
         zs = zs0;
-        
+
         z = z + zs;
         zs = dw;
 
@@ -74,7 +85,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + x + " " + (ys + y) + " " + (zs + z) + ") (" + (xs + x) + " " + (ys + y) + " " + (zs + z) + ") (" + (xs + x) + " " + (y) + " " + (zs + z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
+                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "                     \"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis stuff
                 + "                     \"vaxis\" \"[0 -1 0 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -86,7 +97,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + x + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (ys + y) + " " + (z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
+                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
                 + "                     \"vaxis\" \"[0 -1 0 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -98,7 +109,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (y) + " " + (zs + z) + ") (" + (x) + " " + (y) + " " + (z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
+                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[0 1 0 0] 0.25\"\n" //new axis 
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -110,7 +121,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (xs + x) + " " + (ys + y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (zs + z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
+                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[0 1 0 0] 0.25\"\n" //new axis 
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -122,7 +133,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (xs + x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (ys + y) + " " + (z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
+                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -134,7 +145,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (xs + x) + " " + (y) + " " + (z) + ") (" + (x) + " " + (y) + " " + (z) + ") (" + (x) + " " + (y) + " " + (zs + z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
+                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -264,7 +275,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + x + " " + (ys + y) + " " + (zs + z) + ") (" + (xs + x) + " " + (ys + y) + " " + (zs + z) + ") (" + (xs + x) + " " + (y) + " " + (zs + z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
+                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "                     \"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis stuff
                 + "                     \"vaxis\" \"[0 -1 0 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -276,7 +287,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + x + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (ys + y) + " " + (z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
+                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
                 + "                     \"vaxis\" \"[0 -1 0 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -288,7 +299,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (y) + " " + (zs + z) + ") (" + (x) + " " + (y) + " " + (z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
+                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[0 1 0 0] 0.25\"\n" //new axis 
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -300,7 +311,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (xs + x) + " " + (ys + y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (zs + z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
+                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[0 1 0 0] 0.25\"\n" //new axis 
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -312,7 +323,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (xs + x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (ys + y) + " " + (z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
+                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -324,7 +335,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (xs + x) + " " + (y) + " " + (z) + ") (" + (x) + " " + (y) + " " + (z) + ") (" + (x) + " " + (y) + " " + (zs + z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
+                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -359,7 +370,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + x + " " + (ys + y) + " " + (zs + z) + ") (" + (xs + x) + " " + (ys + y) + " " + (zs + z) + ") (" + (xs + x) + " " + (y) + " " + (zs + z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
+                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "                     \"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis stuff
                 + "                     \"vaxis\" \"[0 -1 0 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -371,7 +382,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + x + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (ys + y) + " " + (z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
+                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
                 + "                     \"vaxis\" \"[0 -1 0 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -383,7 +394,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (y) + " " + (zs + z) + ") (" + (x) + " " + (y) + " " + (z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
+                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[0 1 0 0] 0.25\"\n" //new axis 
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -395,7 +406,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (xs + x) + " " + (ys + y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (zs + z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
+                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[0 1 0 0] 0.25\"\n" //new axis 
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -407,7 +418,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (xs + x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (ys + y) + " " + (z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
+                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -419,7 +430,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (xs + x) + " " + (y) + " " + (z) + ") (" + (x) + " " + (y) + " " + (z) + ") (" + (x) + " " + (y) + " " + (zs + z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
+                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -454,7 +465,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + x + " " + (ys + y) + " " + (zs + z) + ") (" + (xs + x) + " " + (ys + y) + " " + (zs + z) + ") (" + (xs + x) + " " + (y) + " " + (zs + z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
+                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "                     \"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis stuff
                 + "                     \"vaxis\" \"[0 -1 0 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -466,7 +477,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + x + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (ys + y) + " " + (z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
+                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
                 + "                     \"vaxis\" \"[0 -1 0 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -478,7 +489,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (y) + " " + (zs + z) + ") (" + (x) + " " + (y) + " " + (z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
+                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[0 1 0 0] 0.25\"\n" //new axis 
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -490,7 +501,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (xs + x) + " " + (ys + y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (zs + z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
+                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[0 1 0 0] 0.25\"\n" //new axis 
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -502,7 +513,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (xs + x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (ys + y) + " " + (z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
+                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -514,7 +525,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (xs + x) + " " + (y) + " " + (z) + ") (" + (x) + " " + (y) + " " + (z) + ") (" + (x) + " " + (y) + " " + (zs + z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
+                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -549,7 +560,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + x + " " + (ys + y) + " " + (zs + z) + ") (" + (xs + x) + " " + (ys + y) + " " + (zs + z) + ") (" + (xs + x) + " " + (y) + " " + (zs + z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
+                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "                     \"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis stuff
                 + "                     \"vaxis\" \"[0 -1 0 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -561,7 +572,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + x + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (ys + y) + " " + (z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
+                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
                 + "                     \"vaxis\" \"[0 -1 0 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -573,7 +584,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (y) + " " + (zs + z) + ") (" + (x) + " " + (y) + " " + (z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
+                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[0 1 0 0] 0.25\"\n" //new axis 
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -585,7 +596,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (xs + x) + " " + (ys + y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (zs + z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
+                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[0 1 0 0] 0.25\"\n" //new axis 
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -597,7 +608,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (xs + x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (ys + y) + " " + (z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
+                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -609,7 +620,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (xs + x) + " " + (y) + " " + (z) + ") (" + (x) + " " + (y) + " " + (z) + ") (" + (x) + " " + (y) + " " + (zs + z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
+                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"

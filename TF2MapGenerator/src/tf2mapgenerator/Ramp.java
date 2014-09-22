@@ -16,7 +16,7 @@ public class Ramp {
         direction = direct;//N-E-S-W
     }
 
-    public String toString(int id) {
+    public String getOutput(int id) {
         return "";
     }
 }

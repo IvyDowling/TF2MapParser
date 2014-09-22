@@ -45,8 +45,7 @@ public class TF2MapGenerator {
         try {
             reader = new Scanner(new File(loadPath));
         } catch (FileNotFoundException e) {
-            System.out.println("No file found at " + loadPath);
-            throw new FileNotFoundException("Missing file or wrong file-name");
+            throw new FileNotFoundException("\nNo file found at " + loadPath + "\n" + e);
         }
 
         boolean savingFlag = true;
@@ -64,8 +63,7 @@ public class TF2MapGenerator {
                 try {
                     writer = new PrintWriter(generatedFilename + ".vmf", "UTF-8");
                 } catch (IOException io) {
-                    System.out.println("Coudn't make the " + generatedFilename + "file");
-                    throw new IOException("Coudn't make the " + generatedFilename + "file");
+                    throw new IOException("\nCoudn't make the " + generatedFilename + "file\n" + io);
                 }
                 savingFlag = false;
             }
@@ -84,13 +82,13 @@ public class TF2MapGenerator {
             if (reader.next().equalsIgnoreCase("skybox")) {
                 skybox = new Skybox((scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt());
             } else {
-                throw new Exception("\nSyntax error in skybox declaration Line " + lineCount);
+                throw new Exception("\nSyntax error in skybox declaration on line " + lineCount + "\n");
             }
         } else {
             if (firstString.equalsIgnoreCase("skybox")) {
                 skybox = new Skybox((scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt());
             } else {
-                throw new Exception("\nSyntax error in skybox declaration Line " + lineCount);
+                throw new Exception("\nSyntax error in skybox declaration Line " + lineCount + "\n");
             }
         }
         lineCount++;
@@ -100,10 +98,8 @@ public class TF2MapGenerator {
                 lineCount++;
                 String holder = reader.nextLine();
                 holder = holder.trim();
-                if (holder.equals("")) {
+                if (holder.equals("") || holder.charAt(0) == '#') {
                     //skip the whitespace
-                } else if (holder.charAt(0) == '#') {
-                    //skip the line because of comment
                 } else if (holder.equalsIgnoreCase("mirror")) {
                     skybox.setMirror(true);
                 } else {
@@ -127,8 +123,7 @@ public class TF2MapGenerator {
                                 strCount++;
                             }
                         } catch (NumberFormatException n) {
-                            System.out.println("Number Format Exception while parsing ints " + lineCount);
-                            throw n;
+                            throw new NumberFormatException("Number Format Exception while parsing ints " + lineCount + "\n" + n);
                         }
                     }
 
@@ -142,34 +137,36 @@ public class TF2MapGenerator {
                         skybox.addRoom(new Room((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5], (scale) * intParams[6]));
                     } else if (strParams[0].equalsIgnoreCase("-del")) {
                         skybox.getRooms().get(skybox.getRoomsSize() - 1).deleteWall(strParams[1]);  //roomsSize - 1 to get last value
-                    } else if (strParams[0].equalsIgnoreCase("-door")) {
-                        System.out.println("\nDoors aren't working yet\n");
+                    } else if (strParams[0].equalsIgnoreCase("-port") || strParams[0].equalsIgnoreCase("-door")) {
+                        skybox.getRooms().get(skybox.getRoomsSize() - 1).addDoor(strParams[1], (scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3]);  //roomsSize - 1 to get last value
+                    } else if (strParams[0].equalsIgnoreCase("barr")) {
+                        skybox.addSpire(new Spire((scale) * intParams[0], (scale) * intParams[1], skybox.getZ(), (scale) * intParams[2], (scale) * intParams[3], skybox.getZSize()));
                     }
                 }
             }
         } catch (NumberFormatException n) {
-            throw new NumberFormatException("Number Format Exception found when parsing line " + (lineCount - 1) + "\n");
+            throw new NumberFormatException("Number Format Exception found when parsing line " + (lineCount - 1) + "\n" + n);
         } catch (Exception e) {
-            System.out.println("There is a syntax error in your input file on line " + (lineCount - 1) + "\n");
-            throw new IllegalArgumentException("Improper syntax on line " + (lineCount - 1) + "\n");
+            throw new IllegalArgumentException("There is a syntax error in your input file on line " + (lineCount - 1) + "\n" + e);
         }
 
-        //CHECK FOR EMPTY ONES AND KILLS
-        int initKill = skybox.getRoomsSize();
-        for (int i = 0; i < initKill; i++) {
-            for (int w = 0; w < skybox.getRooms().get(i).getWalls().size(); w++) {
+        //CHECK FOR EMPTY, KILLS, and DOORS
+        int size = skybox.getRoomsSize();
+        for (int i = 0; i < size; i++) {
+            // Once per room
+            skybox.getRooms().get(i).cutOutDoors();
+            //before delete
+            for (int w = 0; w < skybox.getRooms().get(i).getWalls().length; w++) {
                 //lets see if this room has any walls that need to die
-                if (skybox.getRooms().get(i).getWalls().get(w).getKill()) {
-                    skybox.getRooms().get(i).getWalls().remove(w);
-                    w = w - 1; //ACCOUNT FOR ARRAYLIST SHIFT
+                if (skybox.getRooms().get(i).getWalls()[w].getKill()) {
+                    skybox.getRooms().get(i).getWalls()[w] = new Spire(0, 0, 0, 0, 0, 0);
                 }
             }
         }
-        initKill = skybox.getSpireSize();
-        for (int i = 0; i < skybox.getSpireSize(); i++) {
+        size = skybox.getSpireSize();
+        for (int i = 0; i < size; i++) {
             if (skybox.getSpires().get(i).getKill()) {
                 skybox.getSpires().remove(i);
-                i = i - 1; //ARRAYLIST SHIFT
             }
         }
         //end
@@ -180,12 +177,13 @@ public class TF2MapGenerator {
             int initMirror = skybox.getSpireSize();
             for (int i = 0; i < initMirror; i++) {
 //                skybox.addSpire(new Spire((skybox.getX()) + (skybox.getXSize() - (skybox.getSpires().get(i).getX() + skybox.getSpires().get(i).getXs())), (skybox.getY()) + (skybox.getYSize() - (skybox.getSpires().get(i).getY() + skybox.getSpires().get(i).getYs())), skybox.getSpires().get(i).getZ(), skybox.getSpires().get(i).getXs(), skybox.getSpires().get(i).getYs(), skybox.getSpires().get(i).getZs()));
-                skybox.addSpire(skybox.getSpires().get(i).getMirror(skybox.getX() + skybox.getXSize(), skybox.getY() + skybox.getYSize()));
+                skybox.addSpire(skybox.getSpires().get(i).getMirror(skybox.getX(), skybox.getY(), skybox.getX() + skybox.getXSize(), skybox.getY() + skybox.getYSize()));
             }
             initMirror = skybox.getRoomsSize();
             for (int i = 0; i < initMirror; i++) {
 //                skybox.addRoom(new Room((skybox.getX()) + (skybox.getXSize() - (skybox.getRooms().get(i).getX() + skybox.getRooms().get(i).getXs())), (skybox.getY()) + (skybox.getYSize() - (skybox.getRooms().get(i).getY() + skybox.getRooms().get(i).getYs())), skybox.getRooms().get(i).getZ(), skybox.getRooms().get(i).getXs(), skybox.getRooms().get(i).getYs(), skybox.getRooms().get(i).getZs(), skybox.getRooms().get(i).getDw()));
-                skybox.addRoom(new Room(skybox.getRooms().get(i).getMirroredRoom(skybox.getX() + skybox.getXSize(), skybox.getY() + skybox.getYSize())));
+                //get the mirrored walls, and the mirrored walls from any doors
+                skybox.addRoom(new Room(skybox.getRooms().get(i).getMirroredRoom(skybox.getX(), skybox.getY(), skybox.getX() + skybox.getXSize(), skybox.getY() + skybox.getYSize()), skybox.getRooms().get(i).getMirroredDoor(skybox.getX(), skybox.getY(), skybox.getX() + skybox.getXSize(), skybox.getY() + skybox.getYSize())));
             }
         }
 
@@ -200,21 +198,142 @@ public class TF2MapGenerator {
             }
 //            for (int i = 0; i < ramps.size(); i++) {
 //                writer.print(skybox.getRamps.get(i).getOutput(id));
-//                id++;
+//                id = id + 5;
 //            }
             for (int r = 0; r < skybox.getRoomsSize(); r++) {
                 writer.print(skybox.getRooms().get(r).getOutput(id));
                 id = id + 6;
             }
+
+            //ROOM LIGHTS LOOP
+            for (int r = 0; r < skybox.getRoomsSize(); r++) {
+                writer.print(skybox.getRooms().get(r).getLight());
+            }
+            //This last write is just for single instance environmental entities
             writer.print("}\n"
                     + "cameras\n"
                     + "{\n"
                     + "	\"activecamera\" \"-1\"\n"
-                    + "}\n");
+                    + "}\n"
+                    + "entity\n"
+                    + "{\n"
+                    + "\"id\" \"256\"\n"
+                    + "\"classname\" \"light_environment\"\n"
+                    + "\"_ambient\" \"156 178 255 250\"\n"
+                    + "\"_ambientHDR\" \"-1 -1 -1 1\"\n"
+                    + "\"_AmbientScaleHDR\" \"1\"\n"
+                    + "\"_light\" \"244 215 193 750\"\n"
+                    + "\"_lightHDR\" \"-1 -1 -1 1\"\n"
+                    + "\"_lightscaleHDR\" \"1\"\n"
+                    + "\"angles\" \"0 51 0\"\n"
+                    + "\"pitch\" \"-37\"\n"
+                    + "\"SunSpreadAngle\" \".5\"\n"
+                    + "\"origin\" \"0 0 256\"\n"
+                    + "editor\n"
+                    + "{\n"
+                    + "\"color\" \"220 30 220\"\n"
+                    + "\"visgroupshown\" \"1\"\n"
+                    + "\"visgroupautoshown\" \"1\"\n"
+                    + "\"logicalpos\" \"[5500 12000]\"\n"
+                    + "}\n"
+                    + "}"
+                    + "entity\n"
+                    + "{\n"
+                    + "	\"id\" \"16\"\n"
+                    + "	\"classname\" \"env_cubemap\"\n"
+                    + "	\"sides\" \"\"\n"
+                    + "	\"origin\" \"0 0 128\"\n"
+                    + "	editor\n"
+                    + "	{\n"
+                    + "		\"color\" \"230 127 0\"\n"
+                    + "		\"groupid\" \"14\"\n"
+                    + "		\"visgroupshown\" \"1\"\n"
+                    + "		\"visgroupautoshown\" \"1\"\n"
+                    + "		\"logicalpos\" \"[0 6000]\"\n"
+                    + "	}\n"
+                    + "}\n"
+                    + "entity\n"
+                    + "{\n"
+                    + "	\"id\" \"2\"\n"
+                    + "	\"classname\" \"shadow_control\"\n"
+                    + "	\"angles\" \"80 145 0\"\n"
+                    + "	\"color\" \"151 152 170\"\n"
+                    + "	\"distance\" \"75\"\n"
+                    + "	\"origin\" \"0 0 160\"\n"
+                    + "	editor\n"
+                    + "	{\n"
+                    + "		\"color\" \"220 30 220\"\n"
+                    + "		\"visgroupshown\" \"1\"\n"
+                    + "		\"visgroupautoshown\" \"1\"\n"
+                    + "		\"logicalpos\" \"[0 -16268]\"\n"
+                    + "	}\n"
+                    + "}\n"
+                    + "entity\n"
+                    + "{\n"
+                    + "	\"id\" \"4\"\n"
+                    + "	\"classname\" \"env_fog_controller\"\n"
+                    + "	\"angles\" \"0 0 0\"\n"
+                    + "	\"farz\" \"3700\"\n"
+                    + "	\"fogblend\" \"0\"\n"
+                    + "	\"fogcolor\" \"130 139 170\"\n"
+                    + "	\"fogcolor2\" \"255 255 255\"\n"
+                    + "	\"fogdir\" \"1 0 0\"\n"
+                    + "	\"fogenable\" \"1\"\n"
+                    + "	\"fogend\" \"8000\"\n"
+                    + "	\"foglerptime\" \"1.5\"\n"
+                    + "	\"fogmaxdensity\" \".9\"\n"
+                    + "	\"fogstart\" \"100\"\n"
+                    + "	\"maxdxlevel\" \"0\"\n"
+                    + "	\"mindxlevel\" \"0\"\n"
+                    + "	\"spawnflags\" \"1\"\n"
+                    + "	\"targetname\" \"fog_controller\"\n"
+                    + "	\"use_angles\" \"0\"\n"
+                    + "	\"origin\" \"0 0 64\"\n"
+                    + "	editor\n"
+                    + "	{\n"
+                    + "		\"color\" \"255 255 255\"\n"
+                    + "		\"visgroupshown\" \"1\"\n"
+                    + "		\"visgroupautoshown\" \"1\"\n"
+                    + "		\"logicalpos\" \"[0 -15768]\"\n"
+                    + "	}\n"
+                    + "}\n"
+                    + "entity\n"
+                    + "{\n"
+                    + "	\"id\" \"6\"\n"
+                    + "	\"classname\" \"color_correction\"\n"
+                    + "	\"fadeInDuration\" \"0.0\"\n"
+                    + "	\"fadeOutDuration\" \"0.0\"\n"
+                    + "	\"filename\" \"scripts/2fort_global.raw\"\n"
+                    + "	\"maxfalloff\" \"-1\"\n"
+                    + "	\"maxweight\" \"1.0\"\n"
+                    + "	\"minfalloff\" \"-1\"\n"
+                    + "	\"targetname\" \"color_global\"\n"
+                    + "	\"origin\" \"0 0 32\"\n"
+                    + "	editor\n"
+                    + "	{\n"
+                    + "		\"color\" \"220 30 220\"\n"
+                    + "		\"visgroupshown\" \"1\"\n"
+                    + "		\"visgroupautoshown\" \"1\"\n"
+                    + "		\"logicalpos\" \"[0 -13268]\"\n"
+                    + "	}\n"
+                    + "}\n"
+                    + "entity\n"
+                    + "{\n"
+                    + "	\"id\" \"10\"\n"
+                    + "	\"classname\" \"env_tonemap_controller\"\n"
+                    + "	\"targetname\" \"tonemap_global\"\n"
+                    + "	\"origin\" \"0 0 278\"\n"
+                    + "	editor\n"
+                    + "	{\n"
+                    + "		\"color\" \"220 30 220\"\n"
+                    + "		\"visgroupshown\" \"1\"\n"
+                    + "		\"visgroupautoshown\" \"1\"\n"
+                    + "		\"logicalpos\" \"[0 -14268]\"\n"
+                    + "	}\n"
+                    + "}");
             writer.close();
-        } catch (Exception ee) {
-            System.out.println("There was an error found during the write-to-file for the file named " + generatedFilename);
-            throw new IOException("Error while writing to file on id " + id);
+        } catch (Exception ioexc) {
+            throw new IOException("There was an error found during the write-to-file for the file named " + generatedFilename + "\n" + ioexc);
         }
         System.out.println("\nProcess Complete!");
     }

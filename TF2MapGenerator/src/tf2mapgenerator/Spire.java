@@ -14,97 +14,102 @@ public class Spire {
         ys = w;
         zs = h;
     }
-    public Spire getMirror(int xXs, int yYs){
-        return new Spire((xXs - (this.getX() + this.getXs())), (yYs - (this.getY() + this.getYs())), this.getZ(), this.getXs(), this.getYs(), this.getZs());
+
+    public Spire getMirror(int xSky, int ySky, int xsSky, int ysSky) {
+        return new Spire(xSky + (xsSky - (this.getX() + this.getXs())), ySky + (ysSky - (this.getY() + this.getYs())), this.getZ(), this.getXs(), this.getYs(), this.getZs());
     }
 
     public String getOutput(int id) {
-        return "solid\n"
-                + "	{\n"
-                + "		\"id\" \" " + id++ + "\"\n"
-                //+z
-                + "		side\n"
-                + "		{\n"
-                + "			\"id\" \"" + (id++) + "\"\n"
-                + "			\"plane\" \"(" + x + " " + (ys + y) + " " + (zs + z) + ") (" + (xs + x) + " " + (ys + y) + " " + (zs + z) + ") (" + (xs + x) + " " + (y) + " " + (zs + z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
-                + "                     \"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis stuff
-                + "                     \"vaxis\" \"[0 -1 0 0] 0.25\"\n"
-                + "			\"rotation\" \"0\"\n"
-                + "			\"lightmapscale\" \"16\"\n"
-                + "			\"smoothing_groups\" \"0\"\n"
-                + "		}\n"
-                //-z
-                + "		side\n"
-                + "		{\n"
-                + "			\"id\" \"" + (id++) + "\"\n"
-                + "			\"plane\" \"(" + x + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (ys + y) + " " + (z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
-                + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
-                + "                     \"vaxis\" \"[0 -1 0 0] 0.25\"\n"
-                + "			\"rotation\" \"0\"\n"
-                + "			\"lightmapscale\" \"16\"\n"
-                + "			\"smoothing_groups\" \"0\"\n"
-                + "		}\n"
-                //-x
-                + "		side\n"
-                + "		{\n"
-                + "			\"id\" \"" + (id++) + "\"\n"
-                + "			\"plane\" \"(" + (x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (y) + " " + (zs + z) + ") (" + (x) + " " + (y) + " " + (z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
-                + "			\"uaxis\" \"[0 1 0 0] 0.25\"\n" //new axis 
-                + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
-                + "			\"rotation\" \"0\"\n"
-                + "			\"lightmapscale\" \"16\"\n"
-                + "			\"smoothing_groups\" \"0\"\n"
-                + "		}\n"
-                //+x
-                + "		side\n"
-                + "		{\n"
-                + "			\"id\" \"" + (id++) + "\"\n"
-                + "			\"plane\" \"(" + (xs + x) + " " + (ys + y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (zs + z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
-                + "			\"uaxis\" \"[0 1 0 0] 0.25\"\n" //new axis 
-                + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
-                + "			\"rotation\" \"0\"\n"
-                + "			\"lightmapscale\" \"16\"\n"
-                + "			\"smoothing_groups\" \"0\"\n"
-                + "		}\n"
-                //+y
-                + "		side\n"
-                + "		{\n"
-                + "			\"id\" \"" + (id++) + "\"\n"
-                + "			\"plane\" \"(" + (xs + x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (ys + y) + " " + (z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
-                + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
-                + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
-                + "			\"rotation\" \"0\"\n"
-                + "			\"lightmapscale\" \"16\"\n"
-                + "			\"smoothing_groups\" \"0\"\n"
-                + "		}\n"
-                //-y
-                + "		side\n"
-                + "		{\n"
-                + "			\"id\" \"" + (id++) + "\"\n"
-                + "			\"plane\" \"(" + (xs + x) + " " + (y) + " " + (z) + ") (" + (x) + " " + (y) + " " + (z) + ") (" + (x) + " " + (y) + " " + (zs + z) + ")\" \n"
-                + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
-                + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
-                + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
-                + "			\"rotation\" \"0\"\n"
-                + "			\"lightmapscale\" \"16\"\n"
-                + "			\"smoothing_groups\" \"0\"\n"
-                + "		}\n"
-                + "		editor\n"
-                + "		{\n"
-                + "			\"color\" \"0 146 143\"\n"
-                + "			\"visgroupshown\" \"1\"\n"
-                + "			\"visgroupautoshown\" \"1\"\n"
-                + "		}\n"
-                + "	}";
+        if (xs <= 0 || ys <= 0 || zs <= 0) {
+            return "";  //DONT EVEN PARSE IT
+        } else {
+            return "solid\n"
+                    + "	{\n"
+                    + "		\"id\" \" " + id++ + "\"\n"
+                    //+z
+                    + "		side\n"
+                    + "		{\n"
+                    + "			\"id\" \"" + (id++) + "\"\n"
+                    + "			\"plane\" \"(" + x + " " + (ys + y) + " " + (zs + z) + ") (" + (xs + x) + " " + (ys + y) + " " + (zs + z) + ") (" + (xs + x) + " " + (y) + " " + (zs + z) + ")\" \n"
+                    + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
+                    + "                     \"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis stuff
+                    + "                     \"vaxis\" \"[0 -1 0 0] 0.25\"\n"
+                    + "			\"rotation\" \"0\"\n"
+                    + "			\"lightmapscale\" \"16\"\n"
+                    + "			\"smoothing_groups\" \"0\"\n"
+                    + "		}\n"
+                    //-z
+                    + "		side\n"
+                    + "		{\n"
+                    + "			\"id\" \"" + (id++) + "\"\n"
+                    + "			\"plane\" \"(" + x + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (ys + y) + " " + (z) + ")\" \n"
+                    + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
+                    + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
+                    + "                     \"vaxis\" \"[0 -1 0 0] 0.25\"\n"
+                    + "			\"rotation\" \"0\"\n"
+                    + "			\"lightmapscale\" \"16\"\n"
+                    + "			\"smoothing_groups\" \"0\"\n"
+                    + "		}\n"
+                    //-x
+                    + "		side\n"
+                    + "		{\n"
+                    + "			\"id\" \"" + (id++) + "\"\n"
+                    + "			\"plane\" \"(" + (x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (y) + " " + (zs + z) + ") (" + (x) + " " + (y) + " " + (z) + ")\" \n"
+                    + "			\"material\" \"DEV/DEV_MEASUREWALL01A\"\n"
+                    + "			\"uaxis\" \"[0 1 0 0] 0.25\"\n" //new axis 
+                    + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
+                    + "			\"rotation\" \"0\"\n"
+                    + "			\"lightmapscale\" \"16\"\n"
+                    + "			\"smoothing_groups\" \"0\"\n"
+                    + "		}\n"
+                    //+x
+                    + "		side\n"
+                    + "		{\n"
+                    + "			\"id\" \"" + (id++) + "\"\n"
+                    + "			\"plane\" \"(" + (xs + x) + " " + (ys + y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (zs + z) + ")\" \n"
+                    + "			\"material\" \"DEV/DEV_MEASUREWALL01A\"\n"
+                    + "			\"uaxis\" \"[0 1 0 0] 0.25\"\n" //new axis 
+                    + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
+                    + "			\"rotation\" \"0\"\n"
+                    + "			\"lightmapscale\" \"16\"\n"
+                    + "			\"smoothing_groups\" \"0\"\n"
+                    + "		}\n"
+                    //+y
+                    + "		side\n"
+                    + "		{\n"
+                    + "			\"id\" \"" + (id++) + "\"\n"
+                    + "			\"plane\" \"(" + (xs + x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (ys + y) + " " + (z) + ")\" \n"
+                    + "			\"material\" \"DEV/DEV_MEASUREWALL01A\"\n"
+                    + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
+                    + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
+                    + "			\"rotation\" \"0\"\n"
+                    + "			\"lightmapscale\" \"16\"\n"
+                    + "			\"smoothing_groups\" \"0\"\n"
+                    + "		}\n"
+                    //-y
+                    + "		side\n"
+                    + "		{\n"
+                    + "			\"id\" \"" + (id++) + "\"\n"
+                    + "			\"plane\" \"(" + (xs + x) + " " + (y) + " " + (z) + ") (" + (x) + " " + (y) + " " + (z) + ") (" + (x) + " " + (y) + " " + (zs + z) + ")\" \n"
+                    + "			\"material\" \"DEV/DEV_MEASUREWALL01A\"\n"
+                    + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
+                    + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
+                    + "			\"rotation\" \"0\"\n"
+                    + "			\"lightmapscale\" \"16\"\n"
+                    + "			\"smoothing_groups\" \"0\"\n"
+                    + "		}\n"
+                    + "		editor\n"
+                    + "		{\n"
+                    + "			\"color\" \"0 146 143\"\n"
+                    + "			\"visgroupshown\" \"1\"\n"
+                    + "			\"visgroupautoshown\" \"1\"\n"
+                    + "		}\n"
+                    + "	}";
+        }
     }
 
     public void kill() {
-        kill = true;
+        kill = true;    //Not evaluated until right before mirroring
     }
 
     public boolean getKill() {
@@ -140,7 +145,7 @@ public class Spire {
     }
 
     @Override
-    public String toString(){
-        return "x: " + x + "y: " + y + "z: " + z + " xs: " + xs + "ys: " + ys + "zs:" + zs;
+    public String toString() {
+        return "x: " + x + ", y: " + y + ", z: " + z + ", xs: " + xs + ", ys: " + ys + ", zs:" + zs;
     }
 }
