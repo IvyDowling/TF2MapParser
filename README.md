@@ -15,7 +15,7 @@ Current argument list:
 Syntax for creating from a text document
 -Each doc can start with either the scale that the map should use, or the skybox.
 -Every doc must include a skybox declaration, but scale is optional
-scale 2
+scale a
 skybox x y z xs ys zs
 
 #To make a spire, type:
@@ -36,8 +36,19 @@ where wall is the face that will be deleted, (sign)(axis)
  Y wall: x = Wx y = Wz
 Only one door can be placed per wall of the room**
 
+#to make a barrier in the map, type
+barr x y xs ys
+
 #To make the map rotationally symmetrical, type:
 mirror
+
+Java's Scanner class is used so white-space on a single line is no big deal
+Comments are made by including the '#' sign at the beginning of a line
+#In general
+
+SKYBOX
+- Acts as the reference for the mirroring process
+- Holds each of the following elements
 
 SPIRES
 - Are always rectangles
@@ -47,5 +58,9 @@ SPIRES
 ROOMS
 - Are defined by their x y z outside coordinates,
 	their size xs ys zs, and the thickness of the walls
+
+BARRIERS (barr)
+- Are always the height of the skybox
+- Used for making playable wall space (specifically for rocket jumping)
 
 For an example file, check out RoomsDoorsExamples.txt
