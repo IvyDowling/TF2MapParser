@@ -127,11 +127,11 @@ public class TF2MapGenerator {
                         }
                     }
 
-                    if (strParams[0].equalsIgnoreCase("spire")) {
+                    if (strParams[0].equalsIgnoreCase("spire") || strParams[0].equalsIgnoreCase("walkway")) {
                         //format is xcoord, ycoord, zcoord, xsize, ysize, zsize
                         skybox.addSpire(new Spire((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
                     } else if (strParams[0].equalsIgnoreCase("ramp")) {
-                        //ramps.add(new Ramp());
+                        skybox.getRamps().add(new Ramp(strParams[1], (scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
                     } else if (strParams[0].equalsIgnoreCase("room")) {
                         // format: x y z xs ys zs (thickness)
                         skybox.addRoom(new Room((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5], (scale) * intParams[6]));
@@ -141,6 +141,12 @@ public class TF2MapGenerator {
                         skybox.getRooms().get(skybox.getRoomsSize() - 1).addDoor(strParams[1], (scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3]);  //roomsSize - 1 to get last value
                     } else if (strParams[0].equalsIgnoreCase("barr")) {
                         skybox.addSpire(new Spire((scale) * intParams[0], (scale) * intParams[1], skybox.getZ(), (scale) * intParams[2], (scale) * intParams[3], skybox.getZSize()));
+                    } else if (strParams[0].equalsIgnoreCase("-wall")) {
+                        skybox.getRooms().get(skybox.getRoomsSize() - 1).addInteriorWall(strParams[1], (scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2]);
+                    } else if (strParams[0].equalsIgnoreCase("incl")) {
+                        skybox.addIncline(new Incline(strParams[1], (scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5], (scale) * intParams[6]));
+                    } else if (strParams[0].equalsIgnoreCase("respawn")) {
+                        skybox.addRespawn(new Respawn((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3]));
                     }
                 }
             }
@@ -156,10 +162,10 @@ public class TF2MapGenerator {
             // Once per room
             skybox.getRooms().get(i).cutOutDoors();
             //before delete
-            for (int w = 0; w < skybox.getRooms().get(i).getWalls().length; w++) {
+            for (int w = 0; w < skybox.getRooms().get(i).getExteriorWalls().length; w++) {
                 //lets see if this room has any walls that need to die
-                if (skybox.getRooms().get(i).getWalls()[w].getKill()) {
-                    skybox.getRooms().get(i).getWalls()[w] = new Spire(0, 0, 0, 0, 0, 0);
+                if (skybox.getRooms().get(i).getExteriorWalls()[w].getKill()) {
+                    skybox.getRooms().get(i).getExteriorWalls()[w] = new Spire(0, 0, 0, 0, 0, 0);
                 }
             }
         }
@@ -181,9 +187,20 @@ public class TF2MapGenerator {
             }
             initMirror = skybox.getRoomsSize();
             for (int i = 0; i < initMirror; i++) {
-//                skybox.addRoom(new Room((skybox.getX()) + (skybox.getXSize() - (skybox.getRooms().get(i).getX() + skybox.getRooms().get(i).getXs())), (skybox.getY()) + (skybox.getYSize() - (skybox.getRooms().get(i).getY() + skybox.getRooms().get(i).getYs())), skybox.getRooms().get(i).getZ(), skybox.getRooms().get(i).getXs(), skybox.getRooms().get(i).getYs(), skybox.getRooms().get(i).getZs(), skybox.getRooms().get(i).getDw()));
                 //get the mirrored walls, and the mirrored walls from any doors
-                skybox.addRoom(new Room(skybox.getRooms().get(i).getMirroredRoom(skybox.getX(), skybox.getY(), skybox.getX() + skybox.getXSize(), skybox.getY() + skybox.getYSize()), skybox.getRooms().get(i).getMirroredDoor(skybox.getX(), skybox.getY(), skybox.getX() + skybox.getXSize(), skybox.getY() + skybox.getYSize())));
+                skybox.addRoom(new Room(skybox.getRooms().get(i).getMirroredRoom(skybox.getX(), skybox.getY(), skybox.getX() + skybox.getXSize(), skybox.getY() + skybox.getYSize()), skybox.getRooms().get(i).getMirroredDoor(skybox.getX(), skybox.getY(), skybox.getX() + skybox.getXSize(), skybox.getY() + skybox.getYSize()), skybox.getRooms().get(i).getMirroredInterior(skybox.getX(), skybox.getY(), skybox.getX() + skybox.getXSize(), skybox.getY() + skybox.getYSize())));
+            }
+            initMirror = skybox.getInclinesSize();
+            for (int i = 0; i < initMirror; i++) {
+                skybox.addIncline(skybox.getInclines().get(i).getMirror(skybox.getX(), skybox.getY(), skybox.getX() + skybox.getXSize(), skybox.getY() + skybox.getYSize()));
+            }
+            initMirror = skybox.getRampSize();
+            for (int i = 0; i < initMirror; i++) {
+                skybox.addRamp(skybox.getRamps().get(i).getMirroredRamp(skybox.getX(), skybox.getY(), skybox.getX() + skybox.getXSize(), skybox.getY() + skybox.getYSize()));
+            }
+            initMirror = skybox.getRespawnSize();
+            for (int i = 0; i < initMirror; i++) {
+                skybox.addRespawn(skybox.getRespawns().get(i).getMirroredRespawn(skybox.getX(), skybox.getY(), skybox.getX() + skybox.getXSize(), skybox.getY() + skybox.getYSize()));
             }
         }
 
@@ -196,26 +213,45 @@ public class TF2MapGenerator {
                 writer.print(skybox.getSpires().get(i).getOutput(id));
                 id = id + 6;
             }
-//            for (int i = 0; i < ramps.size(); i++) {
-//                writer.print(skybox.getRamps.get(i).getOutput(id));
-//                id = id + 5;
-//            }
+            for (int i = 0; i < skybox.getRampSize(); i++) {
+                writer.print(skybox.getRamps().get(i).getOutput(id));
+                id = id + 5;
+            }
+            for (int r = 0; r < skybox.getInclinesSize(); r++) {
+                writer.print(skybox.getInclines().get(r).getOutput(id));
+                id = id + 6;
+            }
             for (int r = 0; r < skybox.getRoomsSize(); r++) {
                 writer.print(skybox.getRooms().get(r).getOutput(id));
                 id = id + 6;
             }
 
-            //ROOM LIGHTS LOOP
-            for (int r = 0; r < skybox.getRoomsSize(); r++) {
-                writer.print(skybox.getRooms().get(r).getLight());
-            }
-            //This last write is just for single instance environmental entities
+            //END WORLD WRITE
             writer.print("}\n"
                     + "cameras\n"
                     + "{\n"
                     + "	\"activecamera\" \"-1\"\n"
-                    + "}\n"
-                    + "entity\n"
+                    + "}\n");
+
+            //
+            //ENTITY CREATION
+            //
+            //ROOM LIGHTS LOOP
+            if (skybox.getMirrored()) {
+                for (int r = 0; r < skybox.getRoomsSize(); r++) {
+                    writer.print(skybox.getRooms().get(r).getLight());
+                    writer.print(skybox.getRooms().get(r).getMirroredLight(skybox.getX(), skybox.getY(), skybox.getX() + skybox.getXSize(), skybox.getY() + skybox.getYSize()));
+                }
+                for (int r = 0; r < skybox.getRespawnSize(); r++) {
+                   writer.print(skybox.getRespawns().get(r).getOutput());
+                }
+            } else {
+                for (int r = 0; r < skybox.getRoomsSize(); r++) {
+                    writer.print(skybox.getRooms().get(r).getLight());
+                }
+            }
+            //This last write is just for single instance environmental entities
+            writer.print("entity\n"
                     + "{\n"
                     + "\"id\" \"256\"\n"
                     + "\"classname\" \"light_environment\"\n"
@@ -332,8 +368,8 @@ public class TF2MapGenerator {
                     + "	}\n"
                     + "}");
             writer.close();
-        } catch (Exception ioexc) {
-            throw new IOException("There was an error found during the write-to-file for the file named " + generatedFilename + "\n" + ioexc);
+        } catch (NullPointerException ioexc) {
+            throw new IOException("There was an error found during the write-to-file for the file named " + generatedFilename + "\nCheck file for syntax errors. " + ioexc);
         }
         System.out.println("\nProcess Complete!");
     }

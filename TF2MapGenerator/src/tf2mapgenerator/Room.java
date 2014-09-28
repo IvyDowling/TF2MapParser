@@ -5,17 +5,19 @@ import java.util.List;
 
 public class Room {
 
-    private int xs, ys, zs, xs0, ys0, zs0;
-    private int x, y, z, x0, y0, z0;
+    private int xs, ys, zs;
+    private int x, y, z;
     private int dw;                 //thickness of walls
 
     private Spire[] exterior = new Spire[6];
     private ArrayList<Spire> croppedWalls;
+    private ArrayList<Spire> interior;
     private ArrayList<Square> squares;
     private List<List<Door>> doors;
 
     public Room(int xcoord, int ycoord, int zcoord, int l, int w, int h, int thickness) {
         croppedWalls = new ArrayList<>();
+        interior = new ArrayList<>();
         squares = new ArrayList<>();
         doors = new ArrayList<>();
         doors.add(new ArrayList<Door>());
@@ -24,12 +26,12 @@ public class Room {
         doors.add(new ArrayList<Door>());
         doors.add(new ArrayList<Door>());
         doors.add(new ArrayList<Door>());
-        x = x0 = xcoord;
-        y = y0 = ycoord;
-        z = z0 = zcoord;
-        xs = xs0 = l;
-        ys = ys0 = w;
-        zs = zs0 = h;
+        x = xcoord;
+        y = ycoord;
+        z = zcoord;
+        xs = l;
+        ys = w;
+        zs = h;
         dw = thickness;
         //TEST WALLS
         exterior[0] = (new Spire(x, y, (z + (zs - dw)), xs, ys, dw)); // TOP +z
@@ -39,17 +41,18 @@ public class Room {
         exterior[4] = (new Spire(x, y + (ys - dw), z, xs, dw, zs)); // BACK +y
         exterior[5] = (new Spire(x, y, z, xs, dw, zs)); // FRONT -y
         //PROPER WALLS
-//        exterior[0] = (new Spire(x, y, (z + (zs - dw)), xs, ys, dw)); // TOP +z
-//        exterior[1] = (new Spire(x, y, z, xs, ys, dw)); // BOTTOM -z   
-//        exterior[2] = (new Spire(x + (xs - dw), y, z + dw, dw, ys, (zs - (2 * dw)))); // RIGHT +x
-//        exterior[3] = (new Spire(x, y, z + dw, dw, ys, zs - (2 * dw))); // LEFT -x
-//        exterior[4] = (new Spire(x + dw, y + (ys - dw), z + dw, xs - (2 * dw), dw, zs - (2 * dw))); // BACK +y
-//        exterior[5] = (new Spire(x + dw, y, z + dw, xs - (2 * dw), dw, zs - (2 * dw))); // FRONT -y
+//        exterior[0] = (new Spire(x, y, (z + (zs0 - dw)), xs0, ys0, dw)); // TOP +z
+//        exterior[1] = (new Spire(x, y, z, xs0, ys0, dw)); // BOTTOM -z   
+//        exterior[2] = (new Spire(x + (xs0 - dw), y, z + dw, dw, ys0, (zs0 - (2 * dw)))); // RIGHT +x
+//        exterior[3] = (new Spire(x, y, z + dw, dw, ys0, zs0 - (2 * dw))); // LEFT -x
+//        exterior[4] = (new Spire(x + dw, y + (ys0 - dw), z + dw, xs0 - (2 * dw), dw, zs0 - (2 * dw))); // BACK +y
+//        exterior[5] = (new Spire(x + dw, y, z + dw, xs0 - (2 * dw), dw, zs0 - (2 * dw))); // FRONT -y
     }
 
-    public Room(Spire[] walls, ArrayList<Spire> crops) {
+    public Room(Spire[] walls, ArrayList<Spire> crops, ArrayList<Spire> interWalls) {
         exterior = walls;
         croppedWalls = crops;
+        interior = interWalls;
     }
 
     public Spire[] getMirroredRoom(int xSky, int ySky, int xXs, int yYs) {
@@ -68,8 +71,30 @@ public class Room {
         return crops;
     }
 
-    public Spire[] getWalls() {
+    public ArrayList<Spire> getMirroredInterior(int xSky, int ySky, int xXs, int yYs) {
+        ArrayList<Spire> inter = new ArrayList<>();
+        for (int i = 0; i < interior.size(); i++) {
+            inter.add(interior.get(i).getMirror(xSky, ySky, xXs, yYs));
+        }
+        return inter;
+    }
+
+    public Spire[] getExteriorWalls() {
         return exterior;
+    }
+
+    public List<Spire> getInteriorWalls() {
+        // not quite sure about that forward cast
+        return interior;
+    }
+
+    public void addInteriorWall(String plane, int wallX, int wallY, int length) {
+        if (plane.trim().equalsIgnoreCase("x")) {
+            interior.add(new Spire(x + wallX, y + wallY, z, length, dw, zs)); // x
+        }
+        if (plane.trim().equalsIgnoreCase("y")) {
+            interior.add(new Spire(x + wallX, y + wallY, z, dw, length, zs)); // y
+        }
     }
 
     private Door[] sortDoors(int whichWall) {
@@ -93,24 +118,30 @@ public class Room {
 
     public void addDoor(String wall, int xD, int yD, int xsD, int ysD) {
         wall = wall.trim().toLowerCase();
-        int theWall = -1;
+        int theWall;
         switch (wall) {
             case "+z":
+            case "up":
                 theWall = 0;
                 break;
             case "-z":
+            case "down":
                 theWall = 1;
                 break;
             case "+x":
+            case "n":
                 theWall = 2;
                 break;
             case "-x":
+            case "s":
                 theWall = 3;
                 break;
             case "+y":
+            case "e":
                 theWall = 4;
                 break;
             case "-y":
+            case "w":
                 theWall = 5;
                 break;
             default:
@@ -182,26 +213,31 @@ public class Room {
             //WALL BREAK-UP
             Door[] sortedDoors = sortDoors(wall);       // sorted with respect to the x value
 
-            for (int dr = 0; dr < sortedDoors.length; dr++) {
-                //EDGE CHECK
-                if (sortedDoors[dr].getX() != 0) {
-                    //This makes the first square before any doors, if there isn't a door at x = 0
-                    squares.add(new Square(xW, yW, sortedDoors[dr].getX() + dw, ysW));
+            if (sortedDoors.length == 1) {
+                for (int dr = 0; dr < sortedDoors.length; dr++) {
+                    //EDGE CHECK
+                    if (sortedDoors[dr].getX() != 0) {
+                        //This makes the first square before any doors, if there isn't a door at x = 0
+                        squares.add(new Square(xW, yW, sortedDoors[dr].getX() + dw, ysW));
+                    }
+                    if (sortedDoors[dr].getX() + sortedDoors[dr].getXs() < xsW) {
+                        //Then there isn't a door at the far edge, so we can  make the last square too
+                        //new Square(whereTheLastDoorEnds,bottom,edgeAfterLastDoor,wholeWallHeight)
+                        squares.add(new Square(xW + dw + (sortedDoors[dr].getX() + sortedDoors[dr].getXs()), yW, (xsW - (sortedDoors[dr].getX() + sortedDoors[dr].getXs())) - dw, ysW));
+                    }
+                    //TOPS AND BOTTOMS
+                    if (sortedDoors[dr].getY() != 0) {
+                        //bottom square
+                        squares.add(new Square(xW + sortedDoors[dr].getX() + dw, yW, sortedDoors[dr].getXs(), sortedDoors[dr].getY()));
+                    }
+                    if (ysW - (sortedDoors[dr].getY() + sortedDoors[dr].getYs()) != 0) {
+                        //top square
+                        squares.add(new Square(xW + sortedDoors[dr].getX() + dw, yW + sortedDoors[dr].getY() + sortedDoors[dr].getYs(), sortedDoors[dr].getXs(), (ysW - (sortedDoors[dr].getY() + sortedDoors[dr].getYs()))));
+                    }
                 }
-                if (sortedDoors[dr].getX() + sortedDoors[dr].getXs() < xsW) {
-                    //Then there isn't a door at the far edge, so we can  make the last square too
-                    //new Square(whereTheLastDoorEnds,bottom,edgeAfterLastDoor,wholeWallHeight)
-                    squares.add(new Square(xW + dw + (sortedDoors[dr].getX() + sortedDoors[dr].getXs()), yW, (xsW - (sortedDoors[dr].getX() + sortedDoors[dr].getXs())) - dw, ysW));
-                }
-                //TOPS AND BOTTOMS
-                if (sortedDoors[dr].getY() != 0) {
-                    //bottom square
-                    squares.add(new Square(xW + sortedDoors[dr].getX() + dw, yW, sortedDoors[dr].getXs(), sortedDoors[dr].getY()));
-                }
-                if (ysW - (sortedDoors[dr].getY() + sortedDoors[dr].getYs()) != 0) {
-                    //top square
-                    squares.add(new Square(xW + sortedDoors[dr].getX() + dw, yW + sortedDoors[dr].getY() + sortedDoors[dr].getYs(), sortedDoors[dr].getXs(), (ysW - (sortedDoors[dr].getY() + sortedDoors[dr].getYs()))));
-                }
+            } else {
+                // Life just got hard
+
             }
             if (squares.size() > 0) {
                 int sqSize = squares.size();
@@ -220,21 +256,27 @@ public class Room {
         wall = wall.trim().toLowerCase();
         switch (wall) {
             case "+z":
+            case "up":
                 exterior[0].kill();
                 break;
             case "-z":
+            case "down":
                 exterior[1].kill();
                 break;
             case "+x":
+            case "n":
                 exterior[2].kill();
                 break;
             case "-x":
+            case "s":
                 exterior[3].kill();
                 break;
             case "+y":
+            case "e":
                 exterior[4].kill();
                 break;
             case "-y":
+            case "w":
                 exterior[5].kill();
                 break;
         }
@@ -249,10 +291,17 @@ public class Room {
                 givenID = givenID + 7;        //there are 6 id hits in each spire
             }
         }
-        //cropped walls method
+        //cropped walls
         if (croppedWalls.size() > 0) {
             for (int i = 0; i < croppedWalls.size(); i++) {
                 out += croppedWalls.get(i).getOutput(givenID);
+                givenID = givenID + 7;
+            }
+        }
+        //interior walls
+        if (interior.size() > 0) {
+            for (int i = 0; i < interior.size(); i++) {
+                out += interior.get(i).getOutput(givenID);
                 givenID = givenID + 7;
             }
         }
@@ -290,7 +339,79 @@ public class Room {
     }
 
     public String getLight() {
-        return "";
+        // 262144= 64^3
+        //[1] is the top [2] is a side
+        int xs0 = xs;
+        int ys0 = ys;
+        int zs0 = zs;
+        int x0 = x;
+        int y0 = y;
+        int z0 = z;
+
+        if (xs0 > 0 && ys0 > 0 && zs0 > 0) {
+            int brightness = (xs0 * ys0 * zs0 / (262144)) + 300;
+            return "\nentity\n"
+                    + "{\n"
+                    + "	\"id\" \"30\"\n"
+                    + "	\"classname\" \"light\"\n"
+                    + "	\"_light\" \"255 255 255 " + brightness + "\"\n"
+                    + "	\"_lightHDR\" \"-1 -1 -1 1\"\n"
+                    + "	\"_lightscaleHDR\" \"1\"\n"
+                    + "	\"_quadratic_attn\" \"1\"\n"
+                    + "	\"origin\" \"" + (x0 + (xs0 / 2)) + " " + (y0 + (ys0 / 2)) + " " + (z0 + (zs0 / 2)) + "\"\n"
+                    + "	editor\n"
+                    + "	{\n"
+                    + "		\"color\" \"220 30 220\"\n"
+                    + "		\"visgroupshown\" \"1\"\n"
+                    + "		\"visgroupautoshown\" \"1\"\n"
+                    + "		\"logicalpos\" \"[0 3000]\"\n"
+                    + "	}\n"
+                    + "}";
+        } else {
+            return "";
+        }
+    }
+
+    public String getMirroredLight(int xSky, int ySky, int xsSky, int ysSky) {
+        // 262144= 64^3
+        //[1] is the top [2] is a side
+        //mirror like >> xSky + (xsSky - (this.getX() + this.getXs()))
+        int xs0 = this.getXs();
+        int ys0 = this.getYs();
+        int zs0 = this.getZs();
+        int x0 = xSky + (xsSky - (this.getX() + this.getXs()));;
+        int y0 = ySky + (ysSky - (this.getY() + this.getYs()));
+        int z0 = this.getZ();
+
+        if (xs0 > 0 && ys0 > 0 && zs0 > 0) {
+            int brightness = (xs0 * ys0 * zs0 / (262144)) + 300;
+            return "\nentity\n"
+                    + "{\n"
+                    + "	\"id\" \"30\"\n"
+                    + "	\"classname\" \"light\"\n"
+                    + "	\"_light\" \"255 255 255 " + brightness + "\"\n"
+                    + "	\"_lightHDR\" \"-1 -1 -1 1\"\n"
+                    + "	\"_lightscaleHDR\" \"1\"\n"
+                    + "	\"_quadratic_attn\" \"1\"\n"
+                    + "	\"origin\" \"" + (x0 + (xs0 / 2)) + " " + (y0 + (ys0 / 2)) + " " + (z0 + (zs0 / 2)) + "\"\n"
+                    + "	editor\n"
+                    + "	{\n"
+                    + "		\"color\" \"220 30 220\"\n"
+                    + "		\"visgroupshown\" \"1\"\n"
+                    + "		\"visgroupautoshown\" \"1\"\n"
+                    + "		\"logicalpos\" \"[0 3000]\"\n"
+                    + "	}\n"
+                    + "}";
+        } else {
+            return "";
+        }
+    }
+
+    private class Door extends Square {
+
+        public Door(int xD, int yD, int xsD, int ysD) {
+            super(xD, yD, xsD, ysD);
+        }
 
     }
 }

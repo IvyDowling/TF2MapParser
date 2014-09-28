@@ -13,7 +13,9 @@ public class Skybox {
 
     private ArrayList<Spire> spires = new ArrayList<>();
     private ArrayList<Ramp> ramps = new ArrayList<>();
+    private ArrayList<Incline> inclines = new ArrayList<>();
     private ArrayList<Room> rooms = new ArrayList<>();
+    private ArrayList<Respawn> respawns = new ArrayList<>();
 
     public Skybox(int xcoord, int ycoord, int zcoord, int l, int w, int h) {
         x = x0 = xcoord;
@@ -23,15 +25,6 @@ public class Skybox {
         ys = ys0 = w;
         zs = zs0 = h;
         additionalOutput = "";
-    }
-    
-    public String getAdditionalOutput(){
-        //method for rooms lights and other skybox related content
-        return additionalOutput;
-    }
-    
-    public void additionalOutput(String add){
-        additionalOutput += add;
     }
 
     public String getOutput(int id) {
@@ -85,7 +78,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + x + " " + (ys + y) + " " + (zs + z) + ") (" + (xs + x) + " " + (ys + y) + " " + (zs + z) + ") (" + (xs + x) + " " + (y) + " " + (zs + z) + ")\" \n"
-                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
+                + "			\"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "                     \"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis stuff
                 + "                     \"vaxis\" \"[0 -1 0 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -97,7 +90,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + x + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (ys + y) + " " + (z) + ")\" \n"
-                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
+                + "			\"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
                 + "                     \"vaxis\" \"[0 -1 0 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -109,7 +102,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (y) + " " + (zs + z) + ") (" + (x) + " " + (y) + " " + (z) + ")\" \n"
-                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
+                + "			\"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[0 1 0 0] 0.25\"\n" //new axis 
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -121,7 +114,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (xs + x) + " " + (ys + y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (zs + z) + ")\" \n"
-                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
+                + "			\"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[0 1 0 0] 0.25\"\n" //new axis 
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -133,7 +126,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (xs + x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (ys + y) + " " + (z) + ")\" \n"
-                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
+                + "			\"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -145,7 +138,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (xs + x) + " " + (y) + " " + (z) + ") (" + (x) + " " + (y) + " " + (z) + ") (" + (x) + " " + (y) + " " + (zs + z) + ")\" \n"
-                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
+                + "			\"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -275,7 +268,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + x + " " + (ys + y) + " " + (zs + z) + ") (" + (xs + x) + " " + (ys + y) + " " + (zs + z) + ") (" + (xs + x) + " " + (y) + " " + (zs + z) + ")\" \n"
-                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
+                + "			\"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "                     \"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis stuff
                 + "                     \"vaxis\" \"[0 -1 0 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -287,7 +280,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + x + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (ys + y) + " " + (z) + ")\" \n"
-                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
+                + "			\"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
                 + "                     \"vaxis\" \"[0 -1 0 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -299,7 +292,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (y) + " " + (zs + z) + ") (" + (x) + " " + (y) + " " + (z) + ")\" \n"
-                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
+                + "			\"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[0 1 0 0] 0.25\"\n" //new axis 
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -311,7 +304,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (xs + x) + " " + (ys + y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (zs + z) + ")\" \n"
-                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
+                + "			\"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[0 1 0 0] 0.25\"\n" //new axis 
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -323,7 +316,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (xs + x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (ys + y) + " " + (z) + ")\" \n"
-                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
+                + "			\"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -335,7 +328,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (xs + x) + " " + (y) + " " + (z) + ") (" + (x) + " " + (y) + " " + (z) + ") (" + (x) + " " + (y) + " " + (zs + z) + ")\" \n"
-                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
+                + "			\"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -370,7 +363,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + x + " " + (ys + y) + " " + (zs + z) + ") (" + (xs + x) + " " + (ys + y) + " " + (zs + z) + ") (" + (xs + x) + " " + (y) + " " + (zs + z) + ")\" \n"
-                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
+                + "			\"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "                     \"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis stuff
                 + "                     \"vaxis\" \"[0 -1 0 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -382,7 +375,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + x + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (ys + y) + " " + (z) + ")\" \n"
-                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
+                + "			\"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
                 + "                     \"vaxis\" \"[0 -1 0 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -394,7 +387,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (y) + " " + (zs + z) + ") (" + (x) + " " + (y) + " " + (z) + ")\" \n"
-                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
+                + "			\"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[0 1 0 0] 0.25\"\n" //new axis 
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -406,7 +399,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (xs + x) + " " + (ys + y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (zs + z) + ")\" \n"
-                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
+                + "			\"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[0 1 0 0] 0.25\"\n" //new axis 
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -418,7 +411,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (xs + x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (ys + y) + " " + (z) + ")\" \n"
-                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
+                + "			\"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -430,7 +423,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (xs + x) + " " + (y) + " " + (z) + ") (" + (x) + " " + (y) + " " + (z) + ") (" + (x) + " " + (y) + " " + (zs + z) + ")\" \n"
-                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
+                + "			\"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -465,7 +458,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + x + " " + (ys + y) + " " + (zs + z) + ") (" + (xs + x) + " " + (ys + y) + " " + (zs + z) + ") (" + (xs + x) + " " + (y) + " " + (zs + z) + ")\" \n"
-                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
+                + "			\"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "                     \"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis stuff
                 + "                     \"vaxis\" \"[0 -1 0 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -477,7 +470,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + x + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (ys + y) + " " + (z) + ")\" \n"
-                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
+                + "			\"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
                 + "                     \"vaxis\" \"[0 -1 0 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -489,7 +482,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (y) + " " + (zs + z) + ") (" + (x) + " " + (y) + " " + (z) + ")\" \n"
-                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
+                + "			\"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[0 1 0 0] 0.25\"\n" //new axis 
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -501,7 +494,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (xs + x) + " " + (ys + y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (zs + z) + ")\" \n"
-                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
+                + "			\"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[0 1 0 0] 0.25\"\n" //new axis 
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -513,7 +506,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (xs + x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (ys + y) + " " + (z) + ")\" \n"
-                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
+                + "			\"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -525,7 +518,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (xs + x) + " " + (y) + " " + (z) + ") (" + (x) + " " + (y) + " " + (z) + ") (" + (x) + " " + (y) + " " + (zs + z) + ")\" \n"
-                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
+                + "			\"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -560,7 +553,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + x + " " + (ys + y) + " " + (zs + z) + ") (" + (xs + x) + " " + (ys + y) + " " + (zs + z) + ") (" + (xs + x) + " " + (y) + " " + (zs + z) + ")\" \n"
-                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
+                + "			\"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "                     \"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis stuff
                 + "                     \"vaxis\" \"[0 -1 0 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -572,7 +565,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + x + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (ys + y) + " " + (z) + ")\" \n"
-                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
+                + "			\"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
                 + "                     \"vaxis\" \"[0 -1 0 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -584,7 +577,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (y) + " " + (zs + z) + ") (" + (x) + " " + (y) + " " + (z) + ")\" \n"
-                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
+                + "			\"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[0 1 0 0] 0.25\"\n" //new axis 
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -596,7 +589,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (xs + x) + " " + (ys + y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (zs + z) + ")\" \n"
-                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
+                + "			\"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[0 1 0 0] 0.25\"\n" //new axis 
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -608,7 +601,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (xs + x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (ys + y) + " " + (z) + ")\" \n"
-                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
+                + "			\"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -620,7 +613,7 @@ public class Skybox {
                 + "		{\n"
                 + "			\"id\" \"" + (id++) + "\"\n"
                 + "			\"plane\" \"(" + (xs + x) + " " + (y) + " " + (z) + ") (" + (x) + " " + (y) + " " + (z) + ") (" + (x) + " " + (y) + " " + (zs + z) + ")\" \n"
-                + "			 \"material\" \"TOOLS/TOOLSSKYBOX\"\n"
+                + "			\"material\" \"TOOLS/TOOLSSKYBOX\"\n"
                 + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
                 + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                 + "			\"rotation\" \"0\"\n"
@@ -661,6 +654,13 @@ public class Skybox {
         return rooms;
     }
 
+    public ArrayList<Incline> getInclines() {
+        return inclines;
+    }
+    public ArrayList<Respawn> getRespawns() {
+        return respawns;
+    }
+
     public int getSpireSize() {
         return spires.size();
     }
@@ -673,6 +673,14 @@ public class Skybox {
         return rooms.size();
     }
 
+    public int getInclinesSize() {
+        return inclines.size();
+    }
+    
+    public int getRespawnSize() {
+        return respawns.size();
+    }
+
     public void addSpire(Spire spire) {
         spires.add(spire);
     }
@@ -683,6 +691,14 @@ public class Skybox {
 
     public void addRoom(Room room) {
         rooms.add(room);
+    }
+
+    public void addIncline(Incline incline) {
+        inclines.add(incline);
+    }
+    
+    public void addRespawn(Respawn res) {
+        respawns.add(res);
     }
 
     //ENDING HERE

@@ -32,8 +32,8 @@ public class Spire {
                     + "			\"id\" \"" + (id++) + "\"\n"
                     + "			\"plane\" \"(" + x + " " + (ys + y) + " " + (zs + z) + ") (" + (xs + x) + " " + (ys + y) + " " + (zs + z) + ") (" + (xs + x) + " " + (y) + " " + (zs + z) + ")\" \n"
                     + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
-                    + "                     \"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis stuff
-                    + "                     \"vaxis\" \"[0 -1 0 0] 0.25\"\n"
+                    + "                 \"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis stuff
+                    + "                 \"vaxis\" \"[0 -1 0 0] 0.25\"\n"
                     + "			\"rotation\" \"0\"\n"
                     + "			\"lightmapscale\" \"16\"\n"
                     + "			\"smoothing_groups\" \"0\"\n"
@@ -45,7 +45,7 @@ public class Spire {
                     + "			\"plane\" \"(" + x + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (ys + y) + " " + (z) + ")\" \n"
                     + "			\"material\" \"DEV/DEV_BLENDMEASURE2\"\n"
                     + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
-                    + "                     \"vaxis\" \"[0 -1 0 0] 0.25\"\n"
+                    + "                 \"vaxis\" \"[0 -1 0 0] 0.25\"\n"
                     + "			\"rotation\" \"0\"\n"
                     + "			\"lightmapscale\" \"16\"\n"
                     + "			\"smoothing_groups\" \"0\"\n"
@@ -57,7 +57,7 @@ public class Spire {
                     + "			\"plane\" \"(" + (x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (y) + " " + (zs + z) + ") (" + (x) + " " + (y) + " " + (z) + ")\" \n"
                     + "			\"material\" \"DEV/DEV_MEASUREWALL01A\"\n"
                     + "			\"uaxis\" \"[0 1 0 0] 0.25\"\n" //new axis 
-                    + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
+                    + "                 \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                     + "			\"rotation\" \"0\"\n"
                     + "			\"lightmapscale\" \"16\"\n"
                     + "			\"smoothing_groups\" \"0\"\n"
@@ -69,7 +69,7 @@ public class Spire {
                     + "			\"plane\" \"(" + (xs + x) + " " + (ys + y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (z) + ") (" + (xs + x) + " " + (y) + " " + (zs + z) + ")\" \n"
                     + "			\"material\" \"DEV/DEV_MEASUREWALL01A\"\n"
                     + "			\"uaxis\" \"[0 1 0 0] 0.25\"\n" //new axis 
-                    + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
+                    + "                 \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                     + "			\"rotation\" \"0\"\n"
                     + "			\"lightmapscale\" \"16\"\n"
                     + "			\"smoothing_groups\" \"0\"\n"
@@ -81,7 +81,7 @@ public class Spire {
                     + "			\"plane\" \"(" + (xs + x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (ys + y) + " " + (zs + z) + ") (" + (x) + " " + (ys + y) + " " + (z) + ")\" \n"
                     + "			\"material\" \"DEV/DEV_MEASUREWALL01A\"\n"
                     + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
-                    + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
+                    + "                 \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                     + "			\"rotation\" \"0\"\n"
                     + "			\"lightmapscale\" \"16\"\n"
                     + "			\"smoothing_groups\" \"0\"\n"
@@ -93,7 +93,7 @@ public class Spire {
                     + "			\"plane\" \"(" + (xs + x) + " " + (y) + " " + (z) + ") (" + (x) + " " + (y) + " " + (z) + ") (" + (x) + " " + (y) + " " + (zs + z) + ")\" \n"
                     + "			\"material\" \"DEV/DEV_MEASUREWALL01A\"\n"
                     + "			\"uaxis\" \"[1 0 0 0] 0.25\"\n" //new axis
-                    + "                     \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
+                    + "                 \"vaxis\" \"[0 0 -1 0] 0.25\"\n"
                     + "			\"rotation\" \"0\"\n"
                     + "			\"lightmapscale\" \"16\"\n"
                     + "			\"smoothing_groups\" \"0\"\n"

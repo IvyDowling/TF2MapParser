@@ -1,0 +1,25 @@
+scale 16
+skybox -64 -64 -16 128 128 64
+spire 24 -22 -14 15 26 2
+spire 24 -34 -16 15 38 2
+spire 24 -36 -16 15 40 1
+room 24 -32 -14 15 30 15 1
+-port -y 4 0 5 11 
+-port -x 7 7 20 3
+-port +x 6 6 4 4 
+-port +z 3 3 7 20
+-del +y
+barr -64 -64 1 96
+room -64 -64 -16 50 20 20 1
+-port +y 7 0 5 10
+-del +x
+room -64 -44 -16 30 20 20 1
+-port +x 12 0 6 10
+-del -y
+-wall x 0 12 10
+incl n 52 -8 -16 20 32 16 2
+respawn -60 -60 4 270
+respawn -60 60 -16 45
+ramp n 0 -36 -16 12 28 11
+spire 0 -8 -6 12 22 1
+mirror
