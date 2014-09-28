@@ -53,7 +53,12 @@ Only one door can be placed per wall of the room as of the current release**
 
 #to make a barrier in the map, type
 barr x y xs ys
->>>>>>> origin/master
+
+#to make a ramp, type
+ramp direction x y z xs ys zs (direction can be in +x,-y form or n,s,e,w)
+
+#to make a inclined walkway, type
+incl direction x y z rise run width-of-walkway thickness-of-walkway (direction can be in +x,-y form or n,s,e,w)
 
 #To make the map rotationally symmetrical, type:
 mirror
