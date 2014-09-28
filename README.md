@@ -25,8 +25,16 @@ spire x y z xs ys zs
 room x y z xs ys zs thickness-of-walls
 #Each room can have walls deleted by typing
 -del wall
-#where wall is the face that will be deleted, (sign)(axis)
-# +z: top -z: bottom +x: left -x: right +y: back -y: front
+where wall is the face that will be deleted, (sign)(axis)
+ +z: top -z: bottom +x: left -x: right +y: back -y: front
+#doors can be made on walls by typing 
+-port x y xs ys
+ the door is defined only with reference to the wall, therefore x,y
+ every wall is observed from the positive direction of the axis.
+ Z wall: x = Wx y = Wy
+ X wall: x = Wy y = Wz
+ Y wall: x = Wx y = Wz
+Only one door can be placed per wall of the room**
 
 #To make the map rotationally symmetrical, type:
 mirror
@@ -39,6 +47,5 @@ SPIRES
 ROOMS
 - Are defined by their x y z outside coordinates,
 	their size xs ys zs, and the thickness of the walls
-- Do not yet support doors, but soon will.
 
-For an example file, check out theTestor.txt
+For an example file, check out RoomsDoorsExamples.txt
