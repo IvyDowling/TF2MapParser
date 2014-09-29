@@ -10,6 +10,9 @@ room 24 -32 -14 15 30 15 1
 -port +z 3 3 7 20
 -del +y
 barr -64 -64 1 96
+#
+# Actual fun
+# 
 room -64 -64 -16 50 20 20 1
 -port +y 7 0 5 10
 -del +x
@@ -22,4 +25,6 @@ respawn -60 -60 4 270
 respawn -60 60 -16 45
 ramp n 0 -36 -16 12 28 11
 spire 0 -8 -6 12 22 1
+ramp e 33 -40 -16 6 10 6
+incl w 39 -40 -16 6 12 10 1
 mirror
