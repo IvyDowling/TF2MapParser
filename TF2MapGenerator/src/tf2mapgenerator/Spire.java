@@ -19,6 +19,7 @@ public class Spire {
         return new Spire(xSky + (xsSky - (this.getX() + this.getXs())), ySky + (ysSky - (this.getY() + this.getYs())), this.getZ(), this.getXs(), this.getYs(), this.getZs());
     }
 
+
     public String getOutput(int id) {
         if (xs <= 0 || ys <= 0 || zs <= 0) {
             return "";  //DONT EVEN PARSE IT
