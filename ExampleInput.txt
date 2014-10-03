@@ -1,22 +1,23 @@
-scale 16
 5cp
 scale 16
 
-skybox -128 -128 0 128 128 64
-	ramp e -116 -32 0 64 16 24
-	entity -60 -40 0 info_player_teamspawn
+skybox -192 -192 0 128 128 64
+	ramp e -136 -100 0 20 16 10
+	entity -20 -110 0 info_player_teamspawn
 	room -116 -116 0 32 32 24 1
 	-port w 6 0 6 12
 	-port e 8 0 16 12
 	-del +z
+	mirror
 	
-frame 0 -260 16 96 128 64
-	room  16 -194 16 64 64 31 1
+frame -64 -324 16 96 128 64
+	room  -52 -256 16 64 64 31 1
 	-port +x 32 0 8 16
 	-del -z
-	-del +y
+	-del -y
+	mirror
 	
-skybox 0 0 0 128 128 64
+skybox -64 -64 -16 128 128 64
 	spire 24 -22 -14 15 26 2
 	spire 24 -34 -16 15 38 2
 	spire 24 -36 -16 15 40 1
@@ -38,8 +39,6 @@ skybox 0 0 0 128 128 64
 	-del -y
 	-wall x 0 12 10
 	incl n 52 -8 -16 20 32 16 2
-	respawn -60 -60 4 270
-	respawn -60 60 -16 45
 	ramp n 0 -36 -16 12 28 11
 	spire 0 -8 -6 12 22 1
 	ramp e 33 -40 -16 6 10 6

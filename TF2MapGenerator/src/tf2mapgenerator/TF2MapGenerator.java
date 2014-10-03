@@ -233,19 +233,70 @@ public class TF2MapGenerator {
             }
         }
 
+        // 5 CP SKYBOX MIRRORING
+        // EVER SINCE I CHANGED SKYBOXES THIS HAS BEEN BROKEN. NEEDS ANOTHER LOOK
+        if (is5cp) {
+            int initialSize = frames.size();
+            for (int fr = 0; fr < initialSize; fr++) {
+                if (fr != mapCenter) {
+                    //This loop should be where detailing of red-blue sides should go
+                    //make a new skybox rotated around the mapCenter skybox.
+                    int newX = frames.get(mapCenter).getX() + (frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize() - (frames.get(fr).getX() + frames.get(fr).getXSize()));
+                    int newY = frames.get(mapCenter).getY() + (frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize() - (frames.get(fr).getY() + frames.get(fr).getYSize()));
+                    //mid + (mid - skyCoord)
+                    if (frames.get(fr).isFrame()) {
+                        frames.add(new Frame(newX, newY, frames.get(fr).getZ(), frames.get(fr).getXSize(), frames.get(fr).getYSize(), frames.get(fr).getZSize()));
+                    } else {
+                        frames.add(new Skybox(newX, newY, frames.get(fr).getZ(), frames.get(fr).getXSize(), frames.get(fr).getYSize(), frames.get(fr).getZSize()));
+                    }
+                    //We use frames.size() to get the last element in 'frames'
+                    int initMirror = frames.get(fr).getSpireSize();
+                    for (int i = 0; i < initMirror; i++) {
+                        frames.get(frames.size() - 1).addSpire(frames.get(fr).getSpires().get(i).getMirror(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()));
+                    }
+                    initMirror = frames.get(fr).getRoomsSize();
+                    for (int i = 0; i < initMirror; i++) {
+                        //get the mirrored walls, and the mirrored walls from any doors, the lights, and the interior walls
+                        frames.get(frames.size() - 1).addRoom(new Room(frames.get(fr).getRooms().get(i).getMirroredRoom(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()), frames.get(fr).getRooms().get(i).getMirroredDoor(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()), frames.get(fr).getRooms().get(i).getMirroredInterior(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()), frames.get(fr).getRooms().get(i).makeMirroredLight(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getXSize(), frames.get(mapCenter).getYSize(), frames.get(fr).getRooms().get(i).getLightBrightness())));
+                        //NOW we need to set the coordinates and thickness for the lights and mirroring to work in the future.
+                        frames.get(frames.size() - 1).getRooms().get(frames.get(frames.size() - 1).getRoomsSize() - 1).setX(frames.get(mapCenter).getX() + (frames.get(mapCenter).getXSize() - (frames.get(fr).getRooms().get(i).getX() + frames.get(fr).getRooms().get(i).getXs())));
+                        frames.get(frames.size() - 1).getRooms().get(frames.get(frames.size() - 1).getRoomsSize() - 1).setY(frames.get(mapCenter).getY() + (frames.get(mapCenter).getYSize() - (frames.get(fr).getRooms().get(i).getY() + frames.get(fr).getRooms().get(i).getYs())));
+                        frames.get(frames.size() - 1).getRooms().get(frames.get(frames.size() - 1).getRoomsSize() - 1).setZ(frames.get(fr).getRooms().get(i).getZ());
+                        frames.get(frames.size() - 1).getRooms().get(frames.get(frames.size() - 1).getRoomsSize() - 1).setXs(frames.get(fr).getRooms().get(i).getXs());
+                        frames.get(frames.size() - 1).getRooms().get(frames.get(frames.size() - 1).getRoomsSize() - 1).setYs(frames.get(fr).getRooms().get(i).getYs());
+                        frames.get(frames.size() - 1).getRooms().get(frames.get(frames.size() - 1).getRoomsSize() - 1).setZs(frames.get(fr).getRooms().get(i).getZs());
+                    }
+                    initMirror = frames.get(fr).getInclinesSize();
+                    for (int i = 0; i < initMirror; i++) {
+                        frames.get(frames.size() - 1).addIncline(frames.get(fr).getInclines().get(i).getMirror(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()));
+                    }
+                    initMirror = frames.get(fr).getRampSize();
+                    for (int i = 0; i < initMirror; i++) {
+                        frames.get(frames.size() - 1).addRamp(frames.get(fr).getRamps().get(i).getMirroredRamp(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()));
+                    }
+                    initMirror = frames.get(fr).getEntitiesSize();
+                    for (int i = 0; i < initMirror; i++) {
+                        frames.get(frames.size() - 1).addEntity(frames.get(fr).getEntities().get(i).getMirroredRespawn(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()));
+                    }
+                    if (frames.get(fr).getMirrored()) {
+                        frames.get(frames.size() - 1).setMirror();
+                    }
+                }
+
+            }
+
+        }
         //ADD General MIRRORED OBJECTS
-        //ALG ==> [skyboxSize -(abs)|coordinate| - width] + skyboxCoord
         for (int fr = 0; fr < frames.size(); fr++) {
             if (frames.get(fr).getMirrored()) {
                 int initMirror = frames.get(fr).getSpireSize();
                 for (int i = 0; i < initMirror; i++) {
-//                skybox.addSpire(new Spire((skybox.getX()) + (skybox.getXSize() - (skybox.getSpires().get(i).getX() + skybox.getSpires().get(i).getXs())), (skybox.getY()) + (skybox.getYSize() - (skybox.getSpires().get(i).getY() + skybox.getSpires().get(i).getYs())), skybox.getSpires().get(i).getZ(), skybox.getSpires().get(i).getXs(), skybox.getSpires().get(i).getYs(), skybox.getSpires().get(i).getZs()));
                     frames.get(fr).addSpire(frames.get(fr).getSpires().get(i).getMirror(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize()));
                 }
                 initMirror = frames.get(fr).getRoomsSize();
                 for (int i = 0; i < initMirror; i++) {
-                    //get the mirrored walls, and the mirrored walls from any doors
-                    frames.get(fr).addRoom(new Room(frames.get(fr).getRooms().get(i).getMirroredRoom(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize()), frames.get(fr).getRooms().get(i).getMirroredDoor(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize()), frames.get(fr).getRooms().get(i).getMirroredInterior(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize())));
+                    //get the mirrored walls, and the mirrored walls from any doors, the interior walls, and the light
+                    frames.get(fr).addRoom(new Room(frames.get(fr).getRooms().get(i).getMirroredRoom(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize()), frames.get(fr).getRooms().get(i).getMirroredDoor(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize()), frames.get(fr).getRooms().get(i).getMirroredInterior(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize()), frames.get(fr).getRooms().get(i).makeMirroredLight(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize(), frames.get(fr).getRooms().get(i).getLightBrightness())));
                 }
                 initMirror = frames.get(fr).getInclinesSize();
                 for (int i = 0; i < initMirror; i++) {
@@ -260,50 +311,6 @@ public class TF2MapGenerator {
                     frames.get(fr).addEntity(frames.get(fr).getEntities().get(i).getMirroredRespawn(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize()));
                 }
             }
-        }
-
-        // 5 CP SKYBOX MIRRORING
-        // EVER SINCE I CHANGED SKYBOXES THIS HAS BEEN BROKEN. NEEDS ANOTHER LOOK
-        if (is5cp) {
-            int initialSize = frames.size();
-            for (int fr = 0; fr < initialSize; fr++) {
-                if (fr != mapCenter) {
-                    //This loop should be where detailing of red-blue sides should go
-                    //make a new skybox rotated around the mapCenter skybox.
-                    int newX = frames.get(mapCenter).getX() + (frames.get(mapCenter).getXSize() - (frames.get(fr).getX() + frames.get(fr).getXSize()));
-                    int newY = frames.get(mapCenter).getY() + (frames.get(mapCenter).getYSize() - (frames.get(fr).getY() + frames.get(fr).getYSize()));
-                    //mid + (mid - skyCoord)
-                    if (frames.get(fr).isFrame()) {
-                        frames.add(new Frame(newX, newY, frames.get(fr).getZ(), frames.get(fr).getXSize(), frames.get(fr).getYSize(), frames.get(fr).getZSize()));
-                    } else {
-                        frames.add(new Skybox(newX, newY, frames.get(fr).getZ(), frames.get(fr).getXSize(), frames.get(fr).getYSize(), frames.get(fr).getZSize()));
-                    }
-                    //We use frames.size() to get the last element in 'frames'
-                    int initMirror = frames.get(fr).getSpireSize();
-                    for (int i = 0; i < initMirror; i++) {
-                        frames.get(frames.size() - 1).addSpire(frames.get(fr).getSpires().get(i).getMirror(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()));
-                    }
-                    initMirror = frames.get(fr).getRoomsSize();
-                    for (int i = 0; i < initMirror; i++) {
-                        //get the mirrored walls, and the mirrored walls from any doors
-                        frames.get(frames.size() - 1).addRoom(new Room(frames.get(fr).getRooms().get(i).getMirroredRoom(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()), frames.get(fr).getRooms().get(i).getMirroredDoor(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()), frames.get(fr).getRooms().get(i).getMirroredInterior(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize())));
-                    }
-                    initMirror = frames.get(fr).getInclinesSize();
-                    for (int i = 0; i < initMirror; i++) {
-                        frames.get(frames.size() - 1).addIncline(frames.get(fr).getInclines().get(i).getMirror(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()));
-                    }
-                    initMirror = frames.get(fr).getRampSize();
-                    for (int i = 0; i < initMirror; i++) {
-                        frames.get(frames.size() - 1).addRamp(frames.get(fr).getRamps().get(i).getMirroredRamp(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()));
-                    }
-                    initMirror = frames.get(fr).getEntitiesSize();
-                    for (int i = 0; i < initMirror; i++) {
-                        frames.get(frames.size() - 1).addEntity(frames.get(fr).getEntities().get(i).getMirroredRespawn(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()));
-                    }
-                }
-
-            }
-
         }
 
         //BEGIN WRITE
@@ -374,48 +381,8 @@ public class TF2MapGenerator {
             //
             //ROOM LIGHTS LOOP
             for (int fr = 0; fr < frames.size(); fr++) {
-                if (is5cp) {
-                    if (fr != mapCenter) {
-                        for (int r = 0; r < frames.get(fr).getRoomsSize(); r++) {
-                            //we need to copy over the actual light, and if the room is mirrored, the mirrored light.
-                            writer.print(frames.get(fr).getRooms().get(r).getMirroredLight(frames.get(mapCenter).getX() + (frames.get(mapCenter).getXSize() - (frames.get(fr).getX() + frames.get(fr).getXSize())), frames.get(mapCenter).getY() + (frames.get(mapCenter).getYSize() - (frames.get(fr).getY() + frames.get(fr).getYSize())), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize()));
-                            //                            writer.print(frames.get(fr).getRooms().get(r).getMirroredLight(frames.get(mapCenter).getX() + (frames.get(mapCenter).getXSize() - (frames.get(fr).getX() + frames.get(fr).getXSize())), frames.get(mapCenter).getY() + (frames.get(mapCenter).getYSize() - (frames.get(fr).getY() + frames.get(fr).getYSize())), frames.get(mapCenter).getX(), frames.get(mapCenter).getY()));
-                            if (frames.get(fr).getMirrored()) {
-                                int brightness = (frames.get(fr).getRooms().get(r).getXs() * frames.get(fr).getRooms().get(r).getYs() * frames.get(fr).getRooms().get(r).getZs() / (262144)) + 300;
-//                                int halfLightDistX = frames.get(fr).getRooms().get(r).getX();
-                                int midX = frames.get(mapCenter).getX() + (frames.get(mapCenter).getXSize() - (frames.get(fr).getX() + frames.get(fr).getXSize()));
-                                int midY = frames.get(mapCenter).getY() + (frames.get(mapCenter).getYSize() - (frames.get(fr).getY() + frames.get(fr).getYSize()));
-                                writer.print(frames.get(fr).getRooms().get(r).addLight(midX, midY, frames.get(fr).getRooms().get(r).getZ() + (frames.get(fr).getRooms().get(r).getZs() / 2), brightness));
-                            }
-                        }
-                    }
-                    if (frames.get(fr).getMirrored()) {
-                        for (int r = 0; r < frames.get(fr).getRoomsSize(); r++) {
-                            writer.print(frames.get(fr).getRooms().get(r).getLight());
-                            writer.print(frames.get(fr).getRooms().get(r).getMirroredLight(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize()));
-                        }
-                        for (int r = 0; r < frames.get(fr).getEntitiesSize(); r++) {
-                            writer.print(frames.get(fr).getEntities().get(r).getOutput());
-                        }
-                    } else {
-                        for (int r = 0; r < frames.get(fr).getRoomsSize(); r++) {
-                            writer.print(frames.get(fr).getRooms().get(r).getLight());
-                        }
-                    }
-                } else {
-                    if (frames.get(fr).getMirrored()) {
-                        for (int r = 0; r < frames.get(fr).getRoomsSize(); r++) {
-                            writer.print(frames.get(fr).getRooms().get(r).getLight());
-                            writer.print(frames.get(fr).getRooms().get(r).getMirroredLight(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize()));
-                        }
-                        for (int r = 0; r < frames.get(fr).getEntitiesSize(); r++) {
-                            writer.print(frames.get(fr).getEntities().get(r).getOutput());
-                        }
-                    } else {
-                        for (int r = 0; r < frames.get(fr).getRoomsSize(); r++) {
-                            writer.print(frames.get(fr).getRooms().get(r).getLight());
-                        }
-                    }
+                for (int r = 0; r < frames.get(fr).getRoomsSize(); r++) {
+                    writer.print(frames.get(fr).getRooms().get(r).getLight());
                 }
             }
 

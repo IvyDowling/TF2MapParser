@@ -14,6 +14,7 @@ public class Room {
     private ArrayList<Spire> interior;
     private ArrayList<Square> squares;
     private List<List<Door>> doors;
+    private Light roomLight;
 
     public Room(int xcoord, int ycoord, int zcoord, int l, int w, int h, int thickness) {
         croppedWalls = new ArrayList<>();
@@ -33,6 +34,9 @@ public class Room {
         ys = w;
         zs = h;
         dw = thickness;
+        //make a light in the center of the room with a brightness that fits the volume
+        // 262144= 64^3
+        roomLight = new Light((x + (xs / 2)), (y + (ys / 2)), (z + (zs / 2)), ((xs * ys * zs / (262144)) + 300));
         //TEST WALLS
         exterior[0] = (new Spire(x, y, (z + (zs - dw)), xs, ys, dw)); // TOP +z
         exterior[1] = (new Spire(x, y, z, xs, ys, dw)); // BOTTOM -z   
@@ -49,10 +53,11 @@ public class Room {
 //        exterior[5] = (new Spire(x + dw, y, z + dw, xs0 - (2 * dw), dw, zs0 - (2 * dw))); // FRONT -y
     }
 
-    public Room(Spire[] walls, ArrayList<Spire> crops, ArrayList<Spire> interWalls) {
+    public Room(Spire[] walls, ArrayList<Spire> crops, ArrayList<Spire> interWalls, Light newLight) {
         exterior = walls;
         croppedWalls = crops;
         interior = interWalls;
+        roomLight = newLight;
     }
 
     public Spire[] getMirroredRoom(int xSky, int ySky, int xXs, int yYs) {
@@ -237,7 +242,6 @@ public class Room {
                 }
             } else {
                 // Life just got hard
-
             }
             if (squares.size() > 0) {
                 int sqSize = squares.size();
@@ -309,6 +313,25 @@ public class Room {
 
     }
 
+    public String getLight() {
+        return roomLight.getOutput();
+    }
+
+    public int getLightBrightness() {
+        return roomLight.getBrightness();
+    }
+
+    public Light makeMirroredLight(int xSky, int ySky, int xsSky, int ysSky, int brightness) {
+        // 262144= 64^3
+        //mirror: xSky + (xsSky - (this.getX() + this.getXs()))
+        int x0 = xSky + (xsSky - (this.getX() + this.getXs())) + this.getXs() / 2;
+        int y0 = ySky + (ysSky - (this.getY() + this.getYs())) + this.getYs() / 2;
+        int z0 = this.getZ() + (this.getZs() / 2);
+        Light mirrorLight = new Light(x0, y0, z0, brightness);
+
+        return mirrorLight;
+    }
+
     public int getXs() {
         return xs;
     }
@@ -338,93 +361,32 @@ public class Room {
 
     }
 
-    public String getLight() {
-        // 262144= 64^3
-        //[1] is the top [2] is a side
-        int xs0 = xs;
-        int ys0 = ys;
-        int zs0 = zs;
-        int x0 = x;
-        int y0 = y;
-        int z0 = z;
-
-        if (xs0 > 0 && ys0 > 0 && zs0 > 0) {
-            int brightness = (xs0 * ys0 * zs0 / (262144)) + 300;
-            return "\nentity\n"
-                    + "{\n"
-                    + "	\"id\" \"30\"\n"
-                    + "	\"classname\" \"light\"\n"
-                    + "	\"_light\" \"255 255 255 " + brightness + "\"\n"
-                    + "	\"_lightHDR\" \"-1 -1 -1 1\"\n"
-                    + "	\"_lightscaleHDR\" \"1\"\n"
-                    + "	\"_quadratic_attn\" \"1\"\n"
-                    + "	\"origin\" \"" + (x0 + (xs0 / 2)) + " " + (y0 + (ys0 / 2)) + " " + (z0 + (zs0 / 2)) + "\"\n"
-                    + "	editor\n"
-                    + "	{\n"
-                    + "		\"color\" \"220 30 220\"\n"
-                    + "		\"visgroupshown\" \"1\"\n"
-                    + "		\"visgroupautoshown\" \"1\"\n"
-                    + "		\"logicalpos\" \"[0 3000]\"\n"
-                    + "	}\n"
-                    + "}";
-        } else {
-            return "";
-        }
+    public void setXs(int xs) {
+        this.xs = xs;
     }
 
-    public String getMirroredLight(int xSky, int ySky, int xsSky, int ysSky) {
-        // 262144= 64^3
-        //[1] is the top [2] is a side
-        //mirror like >> xSky + (xsSky - (this.getX() + this.getXs()))
-        int xs0 = this.getXs();
-        int ys0 = this.getYs();
-        int zs0 = this.getZs();
-        int x0 = xSky + (xsSky - (this.getX() + this.getXs()));;
-        int y0 = ySky + (ysSky - (this.getY() + this.getYs()));
-        int z0 = this.getZ();
-
-        if (xs0 > 0 && ys0 > 0 && zs0 > 0) {
-            int brightness = (xs0 * ys0 * zs0 / (262144)) + 300;
-            return "\nentity\n"
-                    + "{\n"
-                    + "	\"id\" \"30\"\n"
-                    + "	\"classname\" \"light\"\n"
-                    + "	\"_light\" \"255 255 255 " + brightness + "\"\n"
-                    + "	\"_lightHDR\" \"-1 -1 -1 1\"\n"
-                    + "	\"_lightscaleHDR\" \"1\"\n"
-                    + "	\"_quadratic_attn\" \"1\"\n"
-                    + "	\"origin\" \"" + (x0 + (xs0 / 2)) + " " + (y0 + (ys0 / 2)) + " " + (z0 + (zs0 / 2)) + "\"\n"
-                    + "	editor\n"
-                    + "	{\n"
-                    + "		\"color\" \"220 30 220\"\n"
-                    + "		\"visgroupshown\" \"1\"\n"
-                    + "		\"visgroupautoshown\" \"1\"\n"
-                    + "		\"logicalpos\" \"[0 3000]\"\n"
-                    + "	}\n"
-                    + "}";
-        } else {
-            return "";
-        }
+    public void setYs(int ys) {
+        this.ys = ys;
     }
-    
-    public String addLight(int lx, int ly, int lz , int brightness){
-        return "\nentity\n"
-                    + "{\n"
-                    + "	\"id\" \"30\"\n"
-                    + "	\"classname\" \"light\"\n"
-                    + "	\"_light\" \"255 255 255 " + brightness + "\"\n"
-                    + "	\"_lightHDR\" \"-1 -1 -1 1\"\n"
-                    + "	\"_lightscaleHDR\" \"1\"\n"
-                    + "	\"_quadratic_attn\" \"1\"\n"
-                    + "	\"origin\" \"" + (lx) + " " + (ly) + " " + (lz) + "\"\n"
-                    + "	editor\n"
-                    + "	{\n"
-                    + "		\"color\" \"220 30 220\"\n"
-                    + "		\"visgroupshown\" \"1\"\n"
-                    + "		\"visgroupautoshown\" \"1\"\n"
-                    + "		\"logicalpos\" \"[0 3000]\"\n"
-                    + "	}\n"
-                    + "}";
+
+    public void setZs(int zs) {
+        this.zs = zs;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public void setZ(int z) {
+        this.z = z;
+    }
+
+    public void setDw(int dw) {
+        this.dw = dw;
     }
 
     private class Door extends Square {
@@ -434,4 +396,5 @@ public class Room {
         }
 
     }
+
 }
