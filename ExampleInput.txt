@@ -3,7 +3,7 @@ scale 16
 
 skybox -192 -192 0 128 128 64
 	ramp e -136 -100 0 20 16 10
-	entity -20 -110 0 info_player_teamspawn
+	entity -150 -110 0 info_player_teamspawn
 	room -116 -116 0 32 32 24 1
 	-port w 6 0 6 12
 	-port e 8 0 16 12
