@@ -22,17 +22,17 @@ public class Entity {
         ang = angle;
     }
 
-    public Entity getMirroredRespawn(int xSky, int ySky, int xsSky, int ysSky) {
+    public Entity getMirroredEntity(int xSky, int ySky, int xsSky, int ysSky) {
         return new Entity(xSky + (xsSky - (this.getX())), ySky + (ysSky - (this.getY())), this.getZ(), (ang + 180), type);
     }
 
     public String getOutput() {
         return "entity\n"
                 + "{\n"
-                + "	\"id\" \"10\"\n"
+                + "	\"id\" \"999\"\n"
                 + "	\"classname\" \" " + type + "\"\n"
                 + "	\"angles\" \"0 " + ang + " 0 \"\n"
-                + "	\"origin\" \"" + x + " " + y + " " + (z + 4) + "\"\n" // + 4 so you can put it on the surface declared
+                + "	\"origin\" \"" + x + " " + y + " " + (z + 5) + "\"\n" // + 5 so you can put it on the surface declared
                 + "	editor\n"
                 + "	{\n"
                 + "		\"color\" \"220 30 220\"\n"
@@ -53,6 +53,9 @@ public class Entity {
 
     public int getZ() {
         return z;
+    }
+    public String getType(){
+        return type;
     }
 
 }

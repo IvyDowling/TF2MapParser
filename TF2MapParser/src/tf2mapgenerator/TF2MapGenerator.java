@@ -257,10 +257,10 @@ public class TF2MapGenerator {
                     initMirror = frames.get(fr).getRoomsSize();
                     for (int i = 0; i < initMirror; i++) {
                         //get the mirrored walls, and the mirrored walls from any doors, the lights, and the interior walls
-                        frames.get(frames.size() - 1).addRoom(new Room(frames.get(fr).getRooms().get(i).getMirroredRoom(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()), frames.get(fr).getRooms().get(i).getMirroredDoor(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()), frames.get(fr).getRooms().get(i).getMirroredInterior(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()), frames.get(fr).getRooms().get(i).makeMirroredLight(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getXSize(), frames.get(mapCenter).getYSize(), frames.get(fr).getRooms().get(i).getLightBrightness())));
+                        frames.get(frames.size() - 1).addRoom(new Room(frames.get(fr).getRooms().get(i).getMirroredRoom(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()), frames.get(fr).getRooms().get(i).getMirroredDoor(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()), frames.get(fr).getRooms().get(i).getMirroredInterior(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()), frames.get(fr).getRooms().get(i).makeMirroredLight(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize(), frames.get(fr).getRooms().get(i).getLightBrightness())));
                         //NOW we need to set the coordinates and thickness for the lights and mirroring to work in the future.
-                        frames.get(frames.size() - 1).getRooms().get(frames.get(frames.size() - 1).getRoomsSize() - 1).setX(frames.get(mapCenter).getX() + (frames.get(mapCenter).getXSize() - (frames.get(fr).getRooms().get(i).getX() + frames.get(fr).getRooms().get(i).getXs())));
-                        frames.get(frames.size() - 1).getRooms().get(frames.get(frames.size() - 1).getRoomsSize() - 1).setY(frames.get(mapCenter).getY() + (frames.get(mapCenter).getYSize() - (frames.get(fr).getRooms().get(i).getY() + frames.get(fr).getRooms().get(i).getYs())));
+                        frames.get(frames.size() - 1).getRooms().get(frames.get(frames.size() - 1).getRoomsSize() - 1).setX(frames.get(mapCenter).getX() + (frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize() - (frames.get(fr).getRooms().get(i).getX() + frames.get(fr).getRooms().get(i).getXs())));
+                        frames.get(frames.size() - 1).getRooms().get(frames.get(frames.size() - 1).getRoomsSize() - 1).setY(frames.get(mapCenter).getX() + (frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize() - (frames.get(fr).getRooms().get(i).getY() + frames.get(fr).getRooms().get(i).getYs())));
                         frames.get(frames.size() - 1).getRooms().get(frames.get(frames.size() - 1).getRoomsSize() - 1).setZ(frames.get(fr).getRooms().get(i).getZ());
                         frames.get(frames.size() - 1).getRooms().get(frames.get(frames.size() - 1).getRoomsSize() - 1).setXs(frames.get(fr).getRooms().get(i).getXs());
                         frames.get(frames.size() - 1).getRooms().get(frames.get(frames.size() - 1).getRoomsSize() - 1).setYs(frames.get(fr).getRooms().get(i).getYs());
@@ -276,15 +276,13 @@ public class TF2MapGenerator {
                     }
                     initMirror = frames.get(fr).getEntitiesSize();
                     for (int i = 0; i < initMirror; i++) {
-                        frames.get(frames.size() - 1).addEntity(frames.get(fr).getEntities().get(i).getMirroredRespawn(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()));
+                        frames.get(frames.size() - 1).addEntity(frames.get(fr).getEntities().get(i).getMirroredEntity(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()));
                     }
                     if (frames.get(fr).getMirrored()) {
                         frames.get(frames.size() - 1).setMirror();
                     }
                 }
-
             }
-
         }
         //ADD General MIRRORED OBJECTS
         for (int fr = 0; fr < frames.size(); fr++) {
@@ -308,7 +306,7 @@ public class TF2MapGenerator {
                 }
                 initMirror = frames.get(fr).getEntitiesSize();
                 for (int i = 0; i < initMirror; i++) {
-                    frames.get(fr).addEntity(frames.get(fr).getEntities().get(i).getMirroredRespawn(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize()));
+                    frames.get(fr).addEntity(frames.get(fr).getEntities().get(i).getMirroredEntity(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize()));
                 }
             }
         }
@@ -382,7 +380,12 @@ public class TF2MapGenerator {
             //ROOM LIGHTS LOOP
             for (int fr = 0; fr < frames.size(); fr++) {
                 for (int r = 0; r < frames.get(fr).getRoomsSize(); r++) {
-                    writer.print(frames.get(fr).getRooms().get(r).getLight());
+                    writer.print(frames.get(fr).getRooms().get(r).getLightOutput());
+                }
+            }
+            for (int fr = 0; fr < frames.size(); fr++) {
+                for (int e = 0; e < frames.get(fr).getEntitiesSize(); e++) {
+                    writer.print(frames.get(fr).getEntities().get(e).getOutput());
                 }
             }
 

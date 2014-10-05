@@ -313,7 +313,7 @@ public class Room {
 
     }
 
-    public String getLight() {
+    public String getLightOutput() {
         return roomLight.getOutput();
     }
 
@@ -324,8 +324,8 @@ public class Room {
     public Light makeMirroredLight(int xSky, int ySky, int xsSky, int ysSky, int brightness) {
         // 262144= 64^3
         //mirror: xSky + (xsSky - (this.getX() + this.getXs()))
-        int x0 = xSky + (xsSky - (this.getX() + this.getXs())) + this.getXs() / 2;
-        int y0 = ySky + (ysSky - (this.getY() + this.getYs())) + this.getYs() / 2;
+        int x0 = xSky + (xsSky - (this.getX() + this.getXs())) + (this.getXs() / 2);
+        int y0 = ySky + (ysSky - (this.getY() + this.getYs())) + (this.getYs() / 2);
         int z0 = this.getZ() + (this.getZs() / 2);
         Light mirrorLight = new Light(x0, y0, z0, brightness);
 
