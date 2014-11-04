@@ -17,7 +17,6 @@ public class TF2MapGenerator {
     private static PrintWriter writer;
 
     private static ArrayList<Frame> frames = new ArrayList<>();
-//    private static ArrayList<Connector> connectors = new ArrayList<>();
     private static int mapCenter = -1;
     private static boolean is5cp = false;
     private static int scale = 1;
@@ -144,8 +143,8 @@ public class TF2MapGenerator {
                     //skip the whitespace
                 } else {
                     Scanner lineBreaker = new Scanner(holder);
-                    int[] intParams = new int[7];                       // *********LIKELY TO CHANGE**
-                    String[] strParams = new String[2];                 // *********BEWARE CONSTANTS**
+                    int[] intParams = new int[10];                       // *********LIKELY TO CHANGE**
+                    String[] strParams = new String[10];                 // *********BEWARE CONSTANTS**
 
                     //so lets read all of this in
                     //and save the ints as ints and the strings as strings
@@ -193,7 +192,19 @@ public class TF2MapGenerator {
                         f = f + 1;    //We're now working in a new fr/skybox now
                     } else if (strParams[0].equalsIgnoreCase("frame")) {
                         frames.add(new Frame((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
-                        f = f + 1;    //We're now working in a new fr/skybox now
+                        f = f + 1;    //We're now working in a new frame/skybox now
+                    } else if (strParams[0].equalsIgnoreCase("conn")) {
+                        if (strParams[1].equalsIgnoreCase("frame")) {
+                            frames.add(new Frame((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
+                            frames.get(frames.size() - 1).setConnector();
+                            f = f + 1;
+                        } else if (strParams[1].equalsIgnoreCase("skybox")) {
+                            frames.add(new Skybox((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
+                            frames.get(frames.size() - 1).setConnector();
+                            f = f + 1;
+                        } else {
+//                            connectors.add(new Connector(frames.get(intParams[intParams[0]]), strParams[1], (scale) * intParams[1], (scale) * intParams[2], frames.get(intParams[3]), strParams[2], (scale) * intParams[4], (scale) * intParams[5]));
+                        }
                     } else if (strParams[0].equalsIgnoreCase("mirror")) {
                         frames.get(f).setMirror();
                     } else if (strParams[0].equalsIgnoreCase("map-center")) {
@@ -212,7 +223,7 @@ public class TF2MapGenerator {
         }
 
         for (int fr = 0; fr < frames.size(); fr++) {
-            //CHECK FOR EMPTY, KILLS, and DOORS
+            //CHECK FOR ROOM: EMPTY, KILLS, and DOORS
             int size = frames.get(fr).getRoomsSize();
             for (int i = 0; i < size; i++) {
                 // Once per room
@@ -225,18 +236,16 @@ public class TF2MapGenerator {
                     }
                 }
             }
-            size = frames.get(fr).getSpireSize();
-            for (int i = 0; i < size; i++) {
-                if (frames.get(fr).getSpires().get(i).getKill()) {
-                    frames.get(fr).getSpires().remove(i);
-                }
-            }
+
         }
 
         // 5 CP SKYBOX MIRRORING
         // EVER SINCE I CHANGED SKYBOXES THIS HAS BEEN BROKEN. NEEDS ANOTHER LOOK
         if (is5cp) {
             int initialSize = frames.size();
+            if (mapCenter == -1) {
+                throw new Exception("map-center was never declared.");
+            }
             for (int fr = 0; fr < initialSize; fr++) {
                 if (fr != mapCenter) {
                     //This loop should be where detailing of red-blue sides should go
@@ -311,8 +320,27 @@ public class TF2MapGenerator {
             }
         }
 
+        //FRAME-CONNECTOR DOORS
+        for (int i = 0; i < frames.size(); i++) {
+            for (int e = 0; e < frames.size(); e++) {
+                if (i == e) {
+                    //Then we would be checking if the current frame is intersecting itself.
+                } else {
+                    frames.get(i).cutOutDoors(frames.get(e).getX(), frames.get(e).getY(), frames.get(e).getZ(), frames.get(e).getXSize(), frames.get(e).getYSize(), frames.get(e).getZSize());
+                }
+            }
+        }
+        for (int fr = 0; fr < frames.size(); fr++) {
+            for (int i = 0; i < frames.get(fr).getFrameWallsSize(); i++) {
+                if (frames.get(fr).getFrameWalls().get(i).getKill()) {
+                    frames.get(fr).getFrameWalls().remove(i);
+                    i = i - 1;
+                }
+            }
+        }
+
         //BEGIN WRITE
-        int id = 1;         //PENDING INVESTIGATION (not sure if these even matter...)
+        int id = 1;         //The ids don't really matter as far as I've seen
         try {
             writer.print("versioninfo\n"
                     + "{\n"
@@ -381,6 +409,12 @@ public class TF2MapGenerator {
             for (int fr = 0; fr < frames.size(); fr++) {
                 for (int r = 0; r < frames.get(fr).getRoomsSize(); r++) {
                     writer.print(frames.get(fr).getRooms().get(r).getLightOutput());
+                }
+            }
+            //Frame Lights Loop
+            for (int fr = 0; fr < frames.size(); fr++) {
+                for (int r = 0; r < frames.get(fr).getRoomsSize(); r++) {
+                    writer.print(frames.get(fr).getLightOutput());
                 }
             }
             for (int fr = 0; fr < frames.size(); fr++) {

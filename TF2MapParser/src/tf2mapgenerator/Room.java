@@ -134,19 +134,19 @@ public class Room {
                 theWall = 1;
                 break;
             case "+x":
-            case "n":
+            case "e":
                 theWall = 2;
                 break;
             case "-x":
-            case "s":
+            case "w":
                 theWall = 3;
                 break;
             case "+y":
-            case "e":
+            case "n":
                 theWall = 4;
                 break;
             case "-y":
-            case "w":
+            case "s":
                 theWall = 5;
                 break;
             default:
