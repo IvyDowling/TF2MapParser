@@ -2,6 +2,7 @@ package tf2mapgenerator;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  *
@@ -14,14 +15,15 @@ public class Frame {
     private int dw = 64;
 
     private boolean mirrored, isConnector;
-    private ArrayList<Spire> frameWalls = new ArrayList<>();
+    private List<Spire> frameWalls = new ArrayList<>();
     private Light frameLight;
 
-    private ArrayList<Spire> spires = new ArrayList<>();
-    private ArrayList<Ramp> ramps = new ArrayList<>();
-    private ArrayList<Incline> inclines = new ArrayList<>();
-    private ArrayList<Room> rooms = new ArrayList<>();
-    private ArrayList<Entity> entities = new ArrayList<>();
+    private List<Spire> spires = new ArrayList<>();
+    private List<Ramp> ramps = new ArrayList<>();
+    private List<Incline> inclines = new ArrayList<>();
+    private List<Room> rooms = new ArrayList<>();
+    private List<Entity> entities = new ArrayList<>();
+    private List<Point> points = new ArrayList<>();
 
     public Frame(int xcoord, int ycoord, int zcoord, int l, int w, int h) {
         x = x0 = xcoord;
@@ -30,7 +32,8 @@ public class Frame {
         xs = xs0 = l;
         ys = ys0 = w;
         zs = zs0 = h;
-        frameLight = new Light((x + (xs / 2)), (y + (ys / 2)), (z + (zs / 2)), ((xs * ys * zs / (200)) + 300));
+        //arbitrary light size...
+        frameLight = new Light((x + (xs / 2)), (y + (ys / 2)), (z + (zs / 2)), ((xs * ys * zs / (2000)) + 300));
 
         //+z
         frameWalls.add(new FrameWall(x, y, (z + zs), xs, ys, dw));
@@ -69,7 +72,7 @@ public class Frame {
         return frameLight.getOutput();
     }
 
-    public ArrayList<Spire> getFrameWalls() {
+    public List<Spire> getFrameWalls() {
         return frameWalls;
     }
 
@@ -77,24 +80,28 @@ public class Frame {
         return frameWalls.size();
     }
 
-    public ArrayList<Spire> getSpires() {
+    public List<Spire> getSpires() {
         return spires;
     }
 
-    public ArrayList<Ramp> getRamps() {
+    public List<Ramp> getRamps() {
         return ramps;
     }
 
-    public ArrayList<Room> getRooms() {
+    public List<Room> getRooms() {
         return rooms;
     }
 
-    public ArrayList<Incline> getInclines() {
+    public List<Incline> getInclines() {
         return inclines;
     }
 
-    public ArrayList<Entity> getEntities() {
+    public List<Entity> getEntities() {
         return entities;
+    }
+
+    public List<Point> getPoints() {
+        return points;
     }
 
     public int getSpireSize() {
@@ -117,6 +124,10 @@ public class Frame {
         return entities.size();
     }
 
+    public int getPointsSize() {
+        return points.size();
+    }
+
     public void addSpire(Spire spire) {
         spires.add(spire);
     }
@@ -135,6 +146,10 @@ public class Frame {
 
     public void addEntity(Entity res) {
         entities.add(res);
+    }
+
+    public void addPoint(Point pt) {
+        points.add(pt);
     }
 
     //ENDING HERE

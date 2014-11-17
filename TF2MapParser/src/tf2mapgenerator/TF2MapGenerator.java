@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
 public class TF2MapGenerator {
@@ -16,7 +17,8 @@ public class TF2MapGenerator {
     private static Scanner reader;
     private static PrintWriter writer;
 
-    private static ArrayList<Frame> frames = new ArrayList<>();
+    private static List<Frame> frames = new ArrayList<>();
+    private static List<SpawnRoom> spawns = new ArrayList<>();
     private static int mapCenter = -1;
     private static boolean is5cp = false;
     private static int scale = 1;
@@ -187,6 +189,18 @@ public class TF2MapGenerator {
                         frames.get(f).addIncline(new Incline(strParams[1], (scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5], (scale) * intParams[6]));
                     } else if (strParams[0].equalsIgnoreCase("entity")) {
                         frames.get(f).addEntity(new Entity((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], strParams[1]));
+                    } else if (strParams[0].equalsIgnoreCase("pl-clip")) {
+                        //player clip
+                        frames.get(f).addSpire(new PlayerClip((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
+                    } else if (strParams[0].equalsIgnoreCase("fwd-spawn-room")) {
+                        //smaller spawn Room (ACTUALLY A FRAME)
+                        //There are two kinds of spawn rooms, last and forward
+                        spawns.add(new SpawnRoom((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], false));
+                    } else if (strParams[0].equalsIgnoreCase("last-spawn-room")) {
+                        //big spawn room (ACTUALLY A FRAME)
+                        spawns.add(new SpawnRoom((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], true));
+                    } else if (strParams[0].equalsIgnoreCase("point")) {
+                        frames.get(f).addPoint(new Point((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2]));
                     } else if (strParams[0].equalsIgnoreCase("skybox")) {
                         frames.add(new Skybox((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
                         f = f + 1;    //We're now working in a new fr/skybox now
