@@ -24,121 +24,28 @@ public class TF2MapGenerator {
     private static int scale = 1;
 
     public static void main(String[] args) throws Exception {
-
-        // argument checking
-        if (args.length > 0) {
-            if (args[0].equals("-h")) {
-                System.out.println("**HELP MENU**");
-                System.out.println("tf2mapgen <filename>");
-                System.out.println("output is saved as tf2mapgenfile.vmf");
-                System.out.println("For use, see README");
-                throw new Exception("Help menu exit");
-            } else if (args.length > 2 && args[1].equals("-o")) {
-                loadPath = args[0];
-                generatedFilename = args[2];
-            } else {
-                loadPath = args[0];
-                generatedFilename = "tf2mapgenfile";
-            }
-        } else {
-            System.out.println("No build-file given, -h for help.");
-            throw new Exception("No build-file given.");
-        }
-
-        //Let'initKill take a look at that file then
-        try {
-            reader = new Scanner(new File(loadPath));
-        } catch (FileNotFoundException e) {
-            throw new FileNotFoundException("\nNo file found at " + loadPath + "\n" + e);
-        }
-
-        boolean savingFlag = true;
-        int reiterations = 1;
-        while (savingFlag) {
-            File f = new File(generatedFilename + ".vmf");
-            if (f.exists() && !f.isDirectory()) {
-                if (reiterations == 1) {
-                    generatedFilename = generatedFilename + "(" + reiterations + ")";
-                } else {
-                    generatedFilename = generatedFilename.substring(0, generatedFilename.length() - 3) + "(" + reiterations + ")";
-                }
-                reiterations++;
-            } else {
-                try {
-                    writer = new PrintWriter(generatedFilename + ".vmf", "UTF-8");
-                } catch (IOException io) {
-                    throw new IOException("\nCoudn't make the file named " + generatedFilename + ".\n" + io);
-                }
-                savingFlag = false;
-            }
-        }
+        //arguments
+        input(args);
+        //makes base file
+        createVMF();
 
         //
         //MAIN SCANNING LOOP
         //
-        //FIRST LINE CHECK GOES HERE
-        int lineCount = 0;
         String firstString = reader.next().trim();
         if (firstString.equalsIgnoreCase("5cp")) {
-            System.out.println("It's a 5 cp.");
-            is5cp = true;                       //set flag
-            firstString = reader.next();
-            if (firstString.equalsIgnoreCase("scale")) {
-                scale = reader.nextInt();
-                String line = reader.next().trim();
-                lineCount++;
-                if (line.equalsIgnoreCase("skybox")) {
-                    frames.add(new Skybox((scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt()));
-                } else if (line.equalsIgnoreCase("frame")) {
-                    frames.add(new Frame((scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt()));
-                } else {
-                    throw new Exception("\nSyntax error in initial declaration on line " + lineCount + "\n");
-                }
-            } else {
-                String line = reader.next().trim();
-                lineCount++;
-                if (line.equalsIgnoreCase("mid") || line.equalsIgnoreCase("2nd") || line.equalsIgnoreCase("last")) {
-                    line = reader.next();
-                    lineCount++;
-                    if (line.equalsIgnoreCase("skybox")) {
-                        frames.add(new Skybox((scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt()));
-                    } else if (line.equalsIgnoreCase("frame")) {
-                        frames.add(new Frame((scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt()));
-                    }
-                } else {
-                    throw new Exception("\nSyntax error in initial declaration on line " + lineCount + "\n");
-                }
-            }
-            //THIS IS THE 5CP IF
+            make5cp();
         } else if (firstString.equalsIgnoreCase("mid")) {
-            System.out.println("Just making a thing for fun.");
-            firstString = reader.next();
-            if (firstString.equalsIgnoreCase("scale")) {
-                scale = reader.nextInt();
-                lineCount++;
-                if (reader.next().equalsIgnoreCase("skybox")) {
-                    frames.add(new Skybox((scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt()));
-                } else {
-                    throw new Exception("\nSyntax error in skybox declaration on line " + lineCount + "\n");
-                }
-            } else {
-                if (firstString.equalsIgnoreCase("skybox")) {
-                    frames.add(new Skybox((scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt()));
-                } else {
-                    throw new Exception("\nSyntax error in skybox declaration Line " + lineCount + "\n");
-                }
-            }
-            //This isn't a 5cp map
+            makeMid();
+        } else if (firstString.equalsIgnoreCase("jump")) {
+            makeJump();
         } else {
             throw new Exception("\nSyntax error: map type not specified on line 1\n");
         }
-
-        lineCount++;
-        //f is the fr we are working in. When a new fr/skybox is declared, f++;
-        int f = 0;
+        //f is the frame we are working in. When a new frame/skybox is declared, f++;
+        int frame = 0;
         try {
             while (reader.hasNext()) {
-                lineCount++;
                 String holder = reader.nextLine();
                 holder = holder.trim();
                 if (holder.equals("") || holder.charAt(0) == '#') {
@@ -165,75 +72,66 @@ public class TF2MapGenerator {
                                 strCount++;
                             }
                         } catch (NumberFormatException n) {
-                            throw new NumberFormatException("Number Format Exception while parsing ints " + lineCount + "\n" + n);
+                            throw new NumberFormatException("Number Format Exception while parsing ints\n" + n);
                         }
                     }
 
                     if (strParams[0].equalsIgnoreCase("spire") || strParams[0].equalsIgnoreCase("walkway")) {
                         //format is xcoord, ycoord, zcoord, xsize, ysize, zsize
-                        frames.get(f).addSpire(new Spire((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
+                        frames.get(frame).addSpire(new Spire((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
                     } else if (strParams[0].equalsIgnoreCase("ramp")) {
-                        frames.get(f).getRamps().add(new Ramp(strParams[1], (scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
+                        frames.get(frame).getRamps().add(new Ramp(strParams[1], (scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
                     } else if (strParams[0].equalsIgnoreCase("room")) {
                         // format: x y z xs ys zs (thickness)
-                        frames.get(f).addRoom(new Room((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5], (scale) * intParams[6]));
+                        frames.get(frame).addRoom(new Room((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5], (scale) * intParams[6]));
                     } else if (strParams[0].equalsIgnoreCase("-del")) {
-                        frames.get(f).getRooms().get(frames.get(f).getRoomsSize() - 1).deleteWall(strParams[1]);  //roomsSize - 1 to get last value
+                        frames.get(frame).getRooms().get(frames.get(frame).getRoomsSize() - 1).deleteWall(strParams[1]);  //roomsSize - 1 to get last value
                     } else if (strParams[0].equalsIgnoreCase("-port") || strParams[0].equalsIgnoreCase("-door")) {
-                        frames.get(f).getRooms().get(frames.get(f).getRoomsSize() - 1).addDoor(strParams[1], (scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3]);  //roomsSize - 1 to get last value
+                        frames.get(frame).getRooms().get(frames.get(frame).getRoomsSize() - 1).addDoor(strParams[1], (scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3]);  //roomsSize - 1 to get last value
                     } else if (strParams[0].equalsIgnoreCase("barr")) {
-                        frames.get(f).addSpire(new Spire((scale) * intParams[0], (scale) * intParams[1], frames.get(f).getZ(), (scale) * intParams[2], (scale) * intParams[3], frames.get(f).getZSize()));
+                        frames.get(frame).addSpire(new Spire((scale) * intParams[0], (scale) * intParams[1], frames.get(frame).getZ(), (scale) * intParams[2], (scale) * intParams[3], frames.get(frame).getZSize()));
                     } else if (strParams[0].equalsIgnoreCase("-wall")) {
-                        frames.get(f).getRooms().get(frames.get(f).getRoomsSize() - 1).addInteriorWall(strParams[1], (scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2]);
+                        frames.get(frame).getRooms().get(frames.get(frame).getRoomsSize() - 1).addInteriorWall(strParams[1], (scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2]);
                     } else if (strParams[0].equalsIgnoreCase("incl")) {
-                        frames.get(f).addIncline(new Incline(strParams[1], (scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5], (scale) * intParams[6]));
+                        frames.get(frame).addIncline(new Incline(strParams[1], (scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5], (scale) * intParams[6]));
                     } else if (strParams[0].equalsIgnoreCase("entity")) {
-                        frames.get(f).addEntity(new Entity((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], strParams[1]));
+                        frames.get(frame).addEntity(new Entity((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], strParams[1]));
                     } else if (strParams[0].equalsIgnoreCase("pl-clip")) {
                         //player clip
-                        frames.get(f).addSpire(new PlayerClip((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
-                    } else if (strParams[0].equalsIgnoreCase("fwd-spawn-room")) {
-                        //smaller spawn Room (ACTUALLY A FRAME)
-                        //There are two kinds of spawn rooms, last and forward
-                        spawns.add(new SpawnRoom((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], false));
-                    } else if (strParams[0].equalsIgnoreCase("last-spawn-room")) {
-                        //big spawn room (ACTUALLY A FRAME)
-                        spawns.add(new SpawnRoom((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], true));
-                    } else if (strParams[0].equalsIgnoreCase("point")) {
-                        frames.get(f).addPoint(new Point((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2]));
+                        frames.get(frame).addSpire(new PlayerClip((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
                     } else if (strParams[0].equalsIgnoreCase("skybox")) {
                         frames.add(new Skybox((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
-                        f = f + 1;    //We're now working in a new fr/skybox now
+                        frame = frame + 1;    //We're now working in a new frame/skybox now
                     } else if (strParams[0].equalsIgnoreCase("frame")) {
                         frames.add(new Frame((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
-                        f = f + 1;    //We're now working in a new frame/skybox now
+                        frame = frame + 1;    //We're now working in a new frame/skybox now
                     } else if (strParams[0].equalsIgnoreCase("conn")) {
                         if (strParams[1].equalsIgnoreCase("frame")) {
                             frames.add(new Frame((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
                             frames.get(frames.size() - 1).setConnector();
-                            f = f + 1;
+                            frame = frame + 1;
                         } else if (strParams[1].equalsIgnoreCase("skybox")) {
                             frames.add(new Skybox((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
                             frames.get(frames.size() - 1).setConnector();
-                            f = f + 1;
+                            frame = frame + 1;
                         } else {
 //                            connectors.add(new Connector(frames.get(intParams[intParams[0]]), strParams[1], (scale) * intParams[1], (scale) * intParams[2], frames.get(intParams[3]), strParams[2], (scale) * intParams[4], (scale) * intParams[5]));
                         }
                     } else if (strParams[0].equalsIgnoreCase("mirror")) {
-                        frames.get(f).setMirror();
+                        frames.get(frame).setMirror();
                     } else if (strParams[0].equalsIgnoreCase("map-center")) {
                         //The skybox-fr we are in is the mid
-                        mapCenter = f;
-                        frames.get(f).setMirror();
+                        mapCenter = frame;
+                        frames.get(frame).setMirror();
                     } else {
                         throw new Exception();
                     }
                 }
             }
         } catch (NumberFormatException n) {
-            throw new NumberFormatException("Number Format Exception found when parsing line " + (lineCount) + "\n" + n);
+            throw new NumberFormatException("Number Format Exception found\n" + n);
         } catch (Exception e) {
-            throw new Exception("There is a syntax error in your input file on line " + (lineCount) + "\n" + e);
+            throw new Exception("There is a syntax error in your input file\n" + e);
         }
 
         for (int fr = 0; fr < frames.size(); fr++) {
@@ -254,84 +152,8 @@ public class TF2MapGenerator {
         }
 
         // 5 CP SKYBOX MIRRORING
-        // EVER SINCE I CHANGED SKYBOXES THIS HAS BEEN BROKEN. NEEDS ANOTHER LOOK
         if (is5cp) {
-            int initialSize = frames.size();
-            if (mapCenter == -1) {
-                throw new Exception("map-center was never declared.");
-            }
-            for (int fr = 0; fr < initialSize; fr++) {
-                if (fr != mapCenter) {
-                    //This loop should be where detailing of red-blue sides should go
-                    //make a new skybox rotated around the mapCenter skybox.
-                    int newX = frames.get(mapCenter).getX() + (frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize() - (frames.get(fr).getX() + frames.get(fr).getXSize()));
-                    int newY = frames.get(mapCenter).getY() + (frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize() - (frames.get(fr).getY() + frames.get(fr).getYSize()));
-                    //mid + (mid - skyCoord)
-                    if (frames.get(fr).isFrame()) {
-                        frames.add(new Frame(newX, newY, frames.get(fr).getZ(), frames.get(fr).getXSize(), frames.get(fr).getYSize(), frames.get(fr).getZSize()));
-                    } else {
-                        frames.add(new Skybox(newX, newY, frames.get(fr).getZ(), frames.get(fr).getXSize(), frames.get(fr).getYSize(), frames.get(fr).getZSize()));
-                    }
-                    //We use frames.size() to get the last element in 'frames'
-                    int initMirror = frames.get(fr).getSpireSize();
-                    for (int i = 0; i < initMirror; i++) {
-                        frames.get(frames.size() - 1).addSpire(frames.get(fr).getSpires().get(i).getMirror(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()));
-                    }
-                    initMirror = frames.get(fr).getRoomsSize();
-                    for (int i = 0; i < initMirror; i++) {
-                        //get the mirrored walls, and the mirrored walls from any doors, the lights, and the interior walls
-                        frames.get(frames.size() - 1).addRoom(new Room(frames.get(fr).getRooms().get(i).getMirroredRoom(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()), frames.get(fr).getRooms().get(i).getMirroredDoor(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()), frames.get(fr).getRooms().get(i).getMirroredInterior(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()), frames.get(fr).getRooms().get(i).makeMirroredLight(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize(), frames.get(fr).getRooms().get(i).getLightBrightness())));
-                        //NOW we need to set the coordinates and thickness for the lights and mirroring to work in the future.
-                        frames.get(frames.size() - 1).getRooms().get(frames.get(frames.size() - 1).getRoomsSize() - 1).setX(frames.get(mapCenter).getX() + (frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize() - (frames.get(fr).getRooms().get(i).getX() + frames.get(fr).getRooms().get(i).getXs())));
-                        frames.get(frames.size() - 1).getRooms().get(frames.get(frames.size() - 1).getRoomsSize() - 1).setY(frames.get(mapCenter).getX() + (frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize() - (frames.get(fr).getRooms().get(i).getY() + frames.get(fr).getRooms().get(i).getYs())));
-                        frames.get(frames.size() - 1).getRooms().get(frames.get(frames.size() - 1).getRoomsSize() - 1).setZ(frames.get(fr).getRooms().get(i).getZ());
-                        frames.get(frames.size() - 1).getRooms().get(frames.get(frames.size() - 1).getRoomsSize() - 1).setXs(frames.get(fr).getRooms().get(i).getXs());
-                        frames.get(frames.size() - 1).getRooms().get(frames.get(frames.size() - 1).getRoomsSize() - 1).setYs(frames.get(fr).getRooms().get(i).getYs());
-                        frames.get(frames.size() - 1).getRooms().get(frames.get(frames.size() - 1).getRoomsSize() - 1).setZs(frames.get(fr).getRooms().get(i).getZs());
-                    }
-                    initMirror = frames.get(fr).getInclinesSize();
-                    for (int i = 0; i < initMirror; i++) {
-                        frames.get(frames.size() - 1).addIncline(frames.get(fr).getInclines().get(i).getMirror(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()));
-                    }
-                    initMirror = frames.get(fr).getRampSize();
-                    for (int i = 0; i < initMirror; i++) {
-                        frames.get(frames.size() - 1).addRamp(frames.get(fr).getRamps().get(i).getMirroredRamp(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()));
-                    }
-                    initMirror = frames.get(fr).getEntitiesSize();
-                    for (int i = 0; i < initMirror; i++) {
-                        frames.get(frames.size() - 1).addEntity(frames.get(fr).getEntities().get(i).getMirroredEntity(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()));
-                    }
-                    if (frames.get(fr).getMirrored()) {
-                        frames.get(frames.size() - 1).setMirror();
-                    }
-                }
-            }
-        }
-        //ADD General MIRRORED OBJECTS
-        for (int fr = 0; fr < frames.size(); fr++) {
-            if (frames.get(fr).getMirrored()) {
-                int initMirror = frames.get(fr).getSpireSize();
-                for (int i = 0; i < initMirror; i++) {
-                    frames.get(fr).addSpire(frames.get(fr).getSpires().get(i).getMirror(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize()));
-                }
-                initMirror = frames.get(fr).getRoomsSize();
-                for (int i = 0; i < initMirror; i++) {
-                    //get the mirrored walls, and the mirrored walls from any doors, the interior walls, and the light
-                    frames.get(fr).addRoom(new Room(frames.get(fr).getRooms().get(i).getMirroredRoom(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize()), frames.get(fr).getRooms().get(i).getMirroredDoor(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize()), frames.get(fr).getRooms().get(i).getMirroredInterior(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize()), frames.get(fr).getRooms().get(i).makeMirroredLight(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize(), frames.get(fr).getRooms().get(i).getLightBrightness())));
-                }
-                initMirror = frames.get(fr).getInclinesSize();
-                for (int i = 0; i < initMirror; i++) {
-                    frames.get(fr).addIncline(frames.get(fr).getInclines().get(i).getMirror(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize()));
-                }
-                initMirror = frames.get(fr).getRampSize();
-                for (int i = 0; i < initMirror; i++) {
-                    frames.get(fr).addRamp(frames.get(fr).getRamps().get(i).getMirroredRamp(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize()));
-                }
-                initMirror = frames.get(fr).getEntitiesSize();
-                for (int i = 0; i < initMirror; i++) {
-                    frames.get(fr).addEntity(frames.get(fr).getEntities().get(i).getMirroredEntity(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize()));
-                }
-            }
+            mirror();
         }
 
         //FRAME-CONNECTOR DOORS
@@ -354,6 +176,11 @@ public class TF2MapGenerator {
         }
 
         //BEGIN WRITE
+        write();
+        System.out.println("\nProcess Complete!");
+    }
+
+    private static void write() throws IOException {
         int id = 1;         //The ids don't really matter as far as I've seen
         try {
             writer.print("versioninfo\n"
@@ -558,10 +385,210 @@ public class TF2MapGenerator {
         } catch (NullPointerException ioexc) {
             throw new IOException("There was an error found during the write-to-file for the file named " + generatedFilename + "\nCheck file for syntax errors. " + ioexc);
         }
-        System.out.println("\nProcess Complete!");
     }
 
-    public static boolean canBeInt(String str) {
+    private static void mirror() throws Exception {
+        int initialSize = frames.size();
+        if (mapCenter == -1) {
+            throw new Exception("map-center was never declared.");
+        }
+        for (int fr = 0; fr < initialSize; fr++) {
+            if (fr != mapCenter) {
+                //This loop should be where detailing of red-blue sides should go
+                //make a new skybox rotated around the mapCenter skybox.
+                int newX = frames.get(mapCenter).getX() + (frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize() - (frames.get(fr).getX() + frames.get(fr).getXSize()));
+                int newY = frames.get(mapCenter).getY() + (frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize() - (frames.get(fr).getY() + frames.get(fr).getYSize()));
+                //mid + (mid - skyCoord)
+                if (frames.get(fr).isFrame()) {
+                    frames.add(new Frame(newX, newY, frames.get(fr).getZ(), frames.get(fr).getXSize(), frames.get(fr).getYSize(), frames.get(fr).getZSize()));
+                } else {
+                    frames.add(new Skybox(newX, newY, frames.get(fr).getZ(), frames.get(fr).getXSize(), frames.get(fr).getYSize(), frames.get(fr).getZSize()));
+                }
+                //We use frames.size() to get the last element in 'frames'
+                int initMirror = frames.get(fr).getSpireSize();
+                for (int i = 0; i < initMirror; i++) {
+                    frames.get(frames.size() - 1).addSpire(frames.get(fr).getSpires().get(i).getMirror(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()));
+                }
+                initMirror = frames.get(fr).getRoomsSize();
+                for (int i = 0; i < initMirror; i++) {
+                    //get the mirrored walls, and the mirrored walls from any doors, the lights, and the interior walls
+                    frames.get(frames.size() - 1).addRoom(new Room(frames.get(fr).getRooms().get(i).getMirroredRoom(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()), frames.get(fr).getRooms().get(i).getMirroredDoor(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()), frames.get(fr).getRooms().get(i).getMirroredInterior(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()), frames.get(fr).getRooms().get(i).makeMirroredLight(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize(), frames.get(fr).getRooms().get(i).getLightBrightness())));
+                    //NOW we need to set the coordinates and thickness for the lights and mirroring to work in the future.
+                    frames.get(frames.size() - 1).getRooms().get(frames.get(frames.size() - 1).getRoomsSize() - 1).setX(frames.get(mapCenter).getX() + (frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize() - (frames.get(fr).getRooms().get(i).getX() + frames.get(fr).getRooms().get(i).getXs())));
+                    frames.get(frames.size() - 1).getRooms().get(frames.get(frames.size() - 1).getRoomsSize() - 1).setY(frames.get(mapCenter).getX() + (frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize() - (frames.get(fr).getRooms().get(i).getY() + frames.get(fr).getRooms().get(i).getYs())));
+                    frames.get(frames.size() - 1).getRooms().get(frames.get(frames.size() - 1).getRoomsSize() - 1).setZ(frames.get(fr).getRooms().get(i).getZ());
+                    frames.get(frames.size() - 1).getRooms().get(frames.get(frames.size() - 1).getRoomsSize() - 1).setXs(frames.get(fr).getRooms().get(i).getXs());
+                    frames.get(frames.size() - 1).getRooms().get(frames.get(frames.size() - 1).getRoomsSize() - 1).setYs(frames.get(fr).getRooms().get(i).getYs());
+                    frames.get(frames.size() - 1).getRooms().get(frames.get(frames.size() - 1).getRoomsSize() - 1).setZs(frames.get(fr).getRooms().get(i).getZs());
+                }
+                initMirror = frames.get(fr).getInclinesSize();
+                for (int i = 0; i < initMirror; i++) {
+                    frames.get(frames.size() - 1).addIncline(frames.get(fr).getInclines().get(i).getMirror(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()));
+                }
+                initMirror = frames.get(fr).getRampSize();
+                for (int i = 0; i < initMirror; i++) {
+                    frames.get(frames.size() - 1).addRamp(frames.get(fr).getRamps().get(i).getMirroredRamp(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()));
+                }
+                initMirror = frames.get(fr).getEntitiesSize();
+                for (int i = 0; i < initMirror; i++) {
+                    frames.get(frames.size() - 1).addEntity(frames.get(fr).getEntities().get(i).getMirroredEntity(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()));
+                }
+                if (frames.get(fr).getMirrored()) {
+                    frames.get(frames.size() - 1).setMirror();
+                }
+            }
+        }
+
+        //ADD General MIRRORED OBJECTS
+        for (int fr = 0; fr < frames.size(); fr++) {
+            if (frames.get(fr).getMirrored()) {
+                int initMirror = frames.get(fr).getSpireSize();
+                for (int i = 0; i < initMirror; i++) {
+                    frames.get(fr).addSpire(frames.get(fr).getSpires().get(i).getMirror(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize()));
+                }
+                initMirror = frames.get(fr).getRoomsSize();
+                for (int i = 0; i < initMirror; i++) {
+                    //get the mirrored walls, and the mirrored walls from any doors, the interior walls, and the light
+                    frames.get(fr).addRoom(new Room(frames.get(fr).getRooms().get(i).getMirroredRoom(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize()), frames.get(fr).getRooms().get(i).getMirroredDoor(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize()), frames.get(fr).getRooms().get(i).getMirroredInterior(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize()), frames.get(fr).getRooms().get(i).makeMirroredLight(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize(), frames.get(fr).getRooms().get(i).getLightBrightness())));
+                }
+                initMirror = frames.get(fr).getInclinesSize();
+                for (int i = 0; i < initMirror; i++) {
+                    frames.get(fr).addIncline(frames.get(fr).getInclines().get(i).getMirror(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize()));
+                }
+                initMirror = frames.get(fr).getRampSize();
+                for (int i = 0; i < initMirror; i++) {
+                    frames.get(fr).addRamp(frames.get(fr).getRamps().get(i).getMirroredRamp(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize()));
+                }
+                initMirror = frames.get(fr).getEntitiesSize();
+                for (int i = 0; i < initMirror; i++) {
+                    frames.get(fr).addEntity(frames.get(fr).getEntities().get(i).getMirroredEntity(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize()));
+                }
+            }
+        }
+    }
+
+    private static void createVMF() throws IOException {
+        boolean savingFlag = true;
+        int iterations = 1;
+        //this loop creates a file with an indexed value on the end
+        //instead of failing to save or overwriting
+        while (savingFlag) {
+            File f = new File(generatedFilename + ".vmf");
+            if (f.exists() && !f.isDirectory()) {
+                if (iterations == 1) {
+                    generatedFilename = generatedFilename + "(" + iterations + ")";
+                } else {
+                    generatedFilename = generatedFilename.substring(0, generatedFilename.length() - 3) + "(" + iterations + ")";
+                }
+                iterations++;
+            } else {
+                try {
+                    writer = new PrintWriter(generatedFilename + ".vmf", "UTF-8");
+                } catch (IOException io) {
+                    throw new IOException("\nCoudn't make the file named " + generatedFilename + ".\n" + io);
+                }
+                savingFlag = false;
+            }
+        }
+    }
+
+    private static void makeJump() throws Exception {
+        System.out.println("Making a jump!");
+        String firstString = reader.next();
+        if (firstString.equalsIgnoreCase("scale")) {
+            scale = reader.nextInt();
+            if (reader.next().equalsIgnoreCase("skybox")) {
+                frames.add(new Skybox((scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt()));
+            } else {
+                throw new Exception("\nSyntax error in skybox declaration on line\n");
+            }
+        } else {
+            if (firstString.equalsIgnoreCase("skybox")) {
+                frames.add(new Skybox((scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt()));
+            } else {
+                throw new Exception("\nSyntax error in skybox declaration Line\n");
+            }
+        }
+    }
+
+    private static void makeMid() throws Exception {
+        System.out.println("Just making a mid for fun.");
+        String firstString = reader.next();
+        if (firstString.equalsIgnoreCase("scale")) {
+            scale = reader.nextInt();
+            if (reader.next().equalsIgnoreCase("skybox")) {
+                frames.add(new Skybox((scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt()));
+            } else {
+                throw new Exception("\nSyntax error in skybox declaration on line \n");
+            }
+        } else {
+            if (firstString.equalsIgnoreCase("skybox")) {
+                frames.add(new Skybox((scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt()));
+            } else {
+                throw new Exception("\nSyntax error in skybox declaration Line\n");
+            }
+        }
+    }
+
+    private static void make5cp() throws Exception {
+        System.out.println("It's a 5 cp.");
+        is5cp = true;
+        String firstString = reader.next();
+        if (firstString.equalsIgnoreCase("scale")) {
+            scale = reader.nextInt();
+            String line = reader.next().trim();
+            if (line.equalsIgnoreCase("skybox")) {
+                frames.add(new Skybox((scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt()));
+            } else if (line.equalsIgnoreCase("frame")) {
+                frames.add(new Frame((scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt()));
+            } else {
+                throw new Exception("\nSyntax error in initial declaration on line\n");
+            }
+        } else {
+            String line = reader.next().trim();
+            if (line.equalsIgnoreCase("mid") || line.equalsIgnoreCase("2nd") || line.equalsIgnoreCase("last")) {
+                line = reader.next();
+                if (line.equalsIgnoreCase("skybox")) {
+                    frames.add(new Skybox((scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt()));
+                } else if (line.equalsIgnoreCase("frame")) {
+                    frames.add(new Frame((scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt()));
+                }
+            } else {
+                throw new Exception("\nSyntax error in initial declaration on line\n");
+            }
+        }
+    }
+
+    private static void input(String[] args) throws Exception {
+        // argument checking
+        if (args.length > 0) {
+            if (args[0].equals("-h")) {
+                System.out.println("**HELP MENU**");
+                System.out.println("tf2mapgen <filename>");
+                System.out.println("output is saved as tf2mapgenfile.vmf");
+                System.out.println("For use, see README");
+                throw new Exception("Help menu exit");
+            } else if (args.length > 2 && args[1].equals("-o")) {
+                loadPath = args[0];
+                generatedFilename = args[2];
+            } else {
+                loadPath = args[0];
+                generatedFilename = "tf2mapgenfile";
+            }
+        } else {
+            System.out.println("No build-file given, -h for help.");
+            throw new Exception("No build-file given.");
+        }
+
+        //Let'initKill take a look at that file then
+        try {
+            reader = new Scanner(new File(loadPath));
+        } catch (FileNotFoundException e) {
+            throw new FileNotFoundException("\nNo file found at " + loadPath + "\n" + e);
+        }
+    }
+
+    private static boolean canBeInt(String str) {
         //hate this method
         int letsSee;
         Scanner testInt = new Scanner(str);
