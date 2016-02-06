@@ -44,15 +44,16 @@ public class TF2MapGenerator {
         }
         //f is the frame we are working in. When a new frame/skybox is declared, f++;
         int frame = 0;
+        Frame currentFrame = frames.get(frame);
         try {
             while (reader.hasNext()) {
                 String holder = reader.nextLine();
                 holder = holder.trim();
                 if (holder.equals("") || holder.charAt(0) == '#') {
-                    //skip the whitespace
+                    //skip the whitespace and comments
                 } else {
                     Scanner lineBreaker = new Scanner(holder);
-                    int[] intParams = new int[10];                       // *********LIKELY TO CHANGE**
+                    int[] intParams = new int[10];                       // *********BEWARE CONSTANTS**
                     String[] strParams = new String[10];                 // *********BEWARE CONSTANTS**
 
                     //so lets read all of this in
@@ -75,54 +76,65 @@ public class TF2MapGenerator {
                             throw new NumberFormatException("Number Format Exception while parsing ints\n" + n);
                         }
                     }
-
                     if (strParams[0].equalsIgnoreCase("spire") || strParams[0].equalsIgnoreCase("walkway")) {
                         //format is xcoord, ycoord, zcoord, xsize, ysize, zsize
-                        frames.get(frame).addSpire(new Spire((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
+                        currentFrame.addSpire(new Spire((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
                     } else if (strParams[0].equalsIgnoreCase("ramp")) {
-                        frames.get(frame).getRamps().add(new Ramp(strParams[1], (scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
+                        currentFrame.getRamps().add(new Ramp(strParams[1], (scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
                     } else if (strParams[0].equalsIgnoreCase("room")) {
                         // format: x y z xs ys zs (thickness)
-                        frames.get(frame).addRoom(new Room((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5], (scale) * intParams[6]));
+                        currentFrame.addRoom(new Room((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5], (scale) * intParams[6]));
                     } else if (strParams[0].equalsIgnoreCase("-del")) {
-                        frames.get(frame).getRooms().get(frames.get(frame).getRoomsSize() - 1).deleteWall(strParams[1]);  //roomsSize - 1 to get last value
+                        currentFrame.getRooms().get(currentFrame.getRoomsSize() - 1).deleteWall(strParams[1]);  //roomsSize - 1 to get last value
                     } else if (strParams[0].equalsIgnoreCase("-port") || strParams[0].equalsIgnoreCase("-door")) {
-                        frames.get(frame).getRooms().get(frames.get(frame).getRoomsSize() - 1).addDoor(strParams[1], (scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3]);  //roomsSize - 1 to get last value
+                        currentFrame.getRooms().get(currentFrame.getRoomsSize() - 1).addDoor(strParams[1], (scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3]);  //roomsSize - 1 to get last value
                     } else if (strParams[0].equalsIgnoreCase("barr")) {
-                        frames.get(frame).addSpire(new Spire((scale) * intParams[0], (scale) * intParams[1], frames.get(frame).getZ(), (scale) * intParams[2], (scale) * intParams[3], frames.get(frame).getZSize()));
+                        currentFrame.addSpire(new Spire((scale) * intParams[0], (scale) * intParams[1], currentFrame.getZ(), (scale) * intParams[2], (scale) * intParams[3], currentFrame.getZSize()));
                     } else if (strParams[0].equalsIgnoreCase("-wall")) {
-                        frames.get(frame).getRooms().get(frames.get(frame).getRoomsSize() - 1).addInteriorWall(strParams[1], (scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2]);
+                        currentFrame.getRooms().get(currentFrame.getRoomsSize() - 1).addInteriorWall(strParams[1], (scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2]);
                     } else if (strParams[0].equalsIgnoreCase("incl")) {
-                        frames.get(frame).addIncline(new Incline(strParams[1], (scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5], (scale) * intParams[6]));
+                        currentFrame.addIncline(new Incline(strParams[1], (scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5], (scale) * intParams[6]));
                     } else if (strParams[0].equalsIgnoreCase("entity")) {
-                        frames.get(frame).addEntity(new Entity((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], strParams[1]));
+                        currentFrame.addEntity(new Entity((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], strParams[1]));
                     } else if (strParams[0].equalsIgnoreCase("pl-clip")) {
                         //player clip
-                        frames.get(frame).addSpire(new PlayerClip((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
+                        currentFrame.addSpire(new PlayerClip((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
                     } else if (strParams[0].equalsIgnoreCase("skybox")) {
                         frames.add(new Skybox((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
-                        frame = frame + 1;    //We're now working in a new frame/skybox now
+                        frame = frame + 1;
+                        //We're now working in a new frame/skybox now
+                        //so we need to update currentFrame
+                        currentFrame = frames.get(frame);
                     } else if (strParams[0].equalsIgnoreCase("frame")) {
                         frames.add(new Frame((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
-                        frame = frame + 1;    //We're now working in a new frame/skybox now
+                        frame = frame + 1;
+                        //We're now working in a new frame/skybox now
+                        //so we need to update currentFrame
+                        currentFrame = frames.get(frame);
                     } else if (strParams[0].equalsIgnoreCase("conn")) {
                         if (strParams[1].equalsIgnoreCase("frame")) {
                             frames.add(new Frame((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
                             frames.get(frames.size() - 1).setConnector();
                             frame = frame + 1;
+                            //We're now working in a new frame/skybox now
+                            //so we need to update currentFrame
+                            currentFrame = frames.get(frame);
                         } else if (strParams[1].equalsIgnoreCase("skybox")) {
                             frames.add(new Skybox((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
                             frames.get(frames.size() - 1).setConnector();
                             frame = frame + 1;
+                            //We're now working in a new frame/skybox now
+                            //so we need to update currentFrame
+                            currentFrame = frames.get(frame);
                         } else {
 //                            connectors.add(new Connector(frames.get(intParams[intParams[0]]), strParams[1], (scale) * intParams[1], (scale) * intParams[2], frames.get(intParams[3]), strParams[2], (scale) * intParams[4], (scale) * intParams[5]));
                         }
                     } else if (strParams[0].equalsIgnoreCase("mirror")) {
-                        frames.get(frame).setMirror();
+                        currentFrame.setMirror();
                     } else if (strParams[0].equalsIgnoreCase("map-center")) {
                         //The skybox-fr we are in is the mid
                         mapCenter = frame;
-                        frames.get(frame).setMirror();
+                        currentFrame.setMirror();
                     } else {
                         throw new Exception();
                     }
