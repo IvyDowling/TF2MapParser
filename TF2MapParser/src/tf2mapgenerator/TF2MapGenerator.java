@@ -43,8 +43,8 @@ public class TF2MapGenerator {
             throw new Exception("\nSyntax error: map type not specified on line 1\n");
         }
         //f is the frame we are working in. When a new frame/skybox is declared, f++;
-        int frame = 0;
-        Frame currentFrame = frames.get(frame);
+        int frame = -1;
+        Frame currentFrame = null;
         try {
             while (reader.hasNext()) {
                 String holder = reader.nextLine();
@@ -509,17 +509,6 @@ public class TF2MapGenerator {
         String firstString = reader.next();
         if (firstString.equalsIgnoreCase("scale")) {
             scale = reader.nextInt();
-            if (reader.next().equalsIgnoreCase("skybox")) {
-                frames.add(new Skybox((scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt()));
-            } else {
-                throw new Exception("\nSyntax error in skybox declaration on line\n");
-            }
-        } else {
-            if (firstString.equalsIgnoreCase("skybox")) {
-                frames.add(new Skybox((scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt()));
-            } else {
-                throw new Exception("\nSyntax error in skybox declaration Line\n");
-            }
         }
     }
 
@@ -528,17 +517,6 @@ public class TF2MapGenerator {
         String firstString = reader.next();
         if (firstString.equalsIgnoreCase("scale")) {
             scale = reader.nextInt();
-            if (reader.next().equalsIgnoreCase("skybox")) {
-                frames.add(new Skybox((scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt()));
-            } else {
-                throw new Exception("\nSyntax error in skybox declaration on line \n");
-            }
-        } else {
-            if (firstString.equalsIgnoreCase("skybox")) {
-                frames.add(new Skybox((scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt()));
-            } else {
-                throw new Exception("\nSyntax error in skybox declaration Line\n");
-            }
         }
     }
 
@@ -548,26 +526,6 @@ public class TF2MapGenerator {
         String firstString = reader.next();
         if (firstString.equalsIgnoreCase("scale")) {
             scale = reader.nextInt();
-            String line = reader.next().trim();
-            if (line.equalsIgnoreCase("skybox")) {
-                frames.add(new Skybox((scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt()));
-            } else if (line.equalsIgnoreCase("frame")) {
-                frames.add(new Frame((scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt()));
-            } else {
-                throw new Exception("\nSyntax error in initial declaration on line\n");
-            }
-        } else {
-            String line = reader.next().trim();
-            if (line.equalsIgnoreCase("mid") || line.equalsIgnoreCase("2nd") || line.equalsIgnoreCase("last")) {
-                line = reader.next();
-                if (line.equalsIgnoreCase("skybox")) {
-                    frames.add(new Skybox((scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt()));
-                } else if (line.equalsIgnoreCase("frame")) {
-                    frames.add(new Frame((scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt(), (scale) * reader.nextInt()));
-                }
-            } else {
-                throw new Exception("\nSyntax error in initial declaration on line\n");
-            }
         }
     }
 
