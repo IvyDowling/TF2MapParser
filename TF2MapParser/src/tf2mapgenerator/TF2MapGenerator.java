@@ -155,7 +155,7 @@ public class TF2MapGenerator {
                 //before delete
                 for (int w = 0; w < frames.get(fr).getRooms().get(i).getExteriorWalls().length; w++) {
                     //lets see if this room has any walls that need to die
-                    if (frames.get(fr).getRooms().get(i).getExteriorWalls()[w].getKill()) {
+                    if (frames.get(fr).getRooms().get(i).getExteriorWalls()[w].isKilled()) {
                         frames.get(fr).getRooms().get(i).getExteriorWalls()[w] = new Spire(0, 0, 0, 0, 0, 0);
                     }
                 }
@@ -180,7 +180,7 @@ public class TF2MapGenerator {
         }
         for (int fr = 0; fr < frames.size(); fr++) {
             for (int i = 0; i < frames.get(fr).getFrameWallsSize(); i++) {
-                if (frames.get(fr).getFrameWalls().get(i).getKill()) {
+                if (frames.get(fr).getFrameWalls().get(i).isKilled()) {
                     frames.get(fr).getFrameWalls().remove(i);
                     i = i - 1;
                 }

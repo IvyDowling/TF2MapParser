@@ -213,7 +213,7 @@ public class Spire {
         kill = true;    //Not evaluated until right before mirroring
     }
 
-    public boolean getKill() {
+    public boolean isKilled() {
         if (xs == 0 && ys == 0 && zs == 0) {
             return true;
         } else {

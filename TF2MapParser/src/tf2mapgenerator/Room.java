@@ -290,7 +290,7 @@ public class Room {
         int givenID = id;
         String out = "";
         for (int i = 0; i < exterior.length; i++) {
-            if (!exterior[i].getKill()) {
+            if (!exterior[i].isKilled()) {
                 out += exterior[i].getOutput(givenID);
                 givenID = givenID + 7;        //there are 6 id hits in each spire
             }

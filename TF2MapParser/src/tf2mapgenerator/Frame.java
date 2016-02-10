@@ -54,7 +54,7 @@ public class Frame {
         //gotta kill the walls we made doors in
         int i = 0;
         while (i < frameWalls.size()) {
-            if (frameWalls.get(i).getKill()) {
+            if (frameWalls.get(i).isKilled()) {
                 frameWalls.remove(i);
             } else {
                 i++;
