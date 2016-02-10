@@ -9,7 +9,7 @@ package tf2mapgenerator;
  *
  * @author IV
  */
-public class Point {
+public class Point implements Drawable {
 
     private int x, y, z;
 
@@ -19,19 +19,43 @@ public class Point {
         z = zp;
     }
 
+    @Override
     public int getX() {
         return x;
     }
 
+    @Override
     public int getY() {
         return y;
     }
 
+    @Override
     public int getZ() {
         return z;
     }
 
-    public String getOuptut(int id) {
+    @Override
+    public int getXs() {
+        return 0;
+    }
+
+    @Override
+    public int getYs() {
+        return 0;
+    }
+
+    @Override
+    public int getZs() {
+        return 0;
+    }
+
+    @Override
+    public Type getType() {
+        return Type.ENTITY;
+    }
+
+    @Override
+    public String getOutput(int id) {
         return "";
     }
 

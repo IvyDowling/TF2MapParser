@@ -78,27 +78,30 @@ public class TF2MapGenerator {
                     }
                     if (strParams[0].equalsIgnoreCase("spire") || strParams[0].equalsIgnoreCase("walkway")) {
                         //format is xcoord, ycoord, zcoord, xsize, ysize, zsize
-                        currentFrame.addSpire(new Spire((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
+                        currentFrame.addDrawable(new Spire((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
                     } else if (strParams[0].equalsIgnoreCase("ramp")) {
-                        currentFrame.getRamps().add(new Ramp(strParams[1], (scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
+                        currentFrame.addDrawable(new Ramp(strParams[1], (scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
                     } else if (strParams[0].equalsIgnoreCase("room")) {
                         // format: x y z xs ys zs (thickness)
                         currentFrame.addRoom(new Room((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5], (scale) * intParams[6]));
                     } else if (strParams[0].equalsIgnoreCase("-del")) {
-                        currentFrame.getRooms().get(currentFrame.getRoomsSize() - 1).deleteWall(strParams[1]);  //roomsSize - 1 to get last value
+                        currentFrame.getRooms()[currentFrame.getRoomsSize() - 1].deleteWall(ThreeD.interpret(strParams[1]));  //roomsSize - 1 to get last value
                     } else if (strParams[0].equalsIgnoreCase("-port") || strParams[0].equalsIgnoreCase("-door")) {
-                        currentFrame.getRooms().get(currentFrame.getRoomsSize() - 1).addDoor(strParams[1], (scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3]);  //roomsSize - 1 to get last value
+                        currentFrame.getRooms()[currentFrame.getRoomsSize() - 1].addDoor(strParams[1], (scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3]);  //roomsSize - 1 to get last value
                     } else if (strParams[0].equalsIgnoreCase("barr")) {
-                        currentFrame.addSpire(new Spire((scale) * intParams[0], (scale) * intParams[1], currentFrame.getZ(), (scale) * intParams[2], (scale) * intParams[3], currentFrame.getZSize()));
+                        currentFrame.addDrawable(new Spire((scale) * intParams[0], (scale) * intParams[1], currentFrame.getZ(), (scale) * intParams[2], (scale) * intParams[3], currentFrame.getZs()));
                     } else if (strParams[0].equalsIgnoreCase("-wall")) {
-                        currentFrame.getRooms().get(currentFrame.getRoomsSize() - 1).addInteriorWall(strParams[1], (scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2]);
+                        currentFrame.getRooms()[currentFrame.getRoomsSize() - 1].addInteriorWall(strParams[1], (scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2]);
                     } else if (strParams[0].equalsIgnoreCase("incl")) {
-                        currentFrame.addIncline(new Incline(strParams[1], (scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5], (scale) * intParams[6]));
+                        currentFrame.addDrawable(new Incline(Compass.interpret(strParams[1]), (scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5], (scale) * intParams[6]));
                     } else if (strParams[0].equalsIgnoreCase("entity")) {
-                        currentFrame.addEntity(new Entity((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], strParams[1]));
+                        currentFrame.addDrawable(new Entity((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], strParams[1]));
                     } else if (strParams[0].equalsIgnoreCase("pl-clip")) {
                         //player clip
-                        currentFrame.addSpire(new PlayerClip((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
+                        currentFrame.addDrawable(new PlayerClip((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
+                    } else if (strParams[0].equalsIgnoreCase("nogren") || strParams[0].equalsIgnoreCase("nogrenades")) {
+                        //nogrenades
+                        currentFrame.addDrawable(new NoGrenades((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
                     } else if (strParams[0].equalsIgnoreCase("skybox")) {
                         frames.add(new Skybox((scale) * intParams[0], (scale) * intParams[1], (scale) * intParams[2], (scale) * intParams[3], (scale) * intParams[4], (scale) * intParams[5]));
                         frame = frame + 1;
@@ -146,25 +149,27 @@ public class TF2MapGenerator {
             throw new Exception("There is a syntax error in your input file\n" + e);
         }
 
-        for (int fr = 0; fr < frames.size(); fr++) {
+        System.out.println("Finished reading file, compiling...");
+
+        for (Frame frame1 : frames) {
             //CHECK FOR ROOM: EMPTY, KILLS, and DOORS
-            int size = frames.get(fr).getRoomsSize();
+            int size = frame1.getRoomsSize();
             for (int i = 0; i < size; i++) {
                 // Once per room
-                frames.get(fr).getRooms().get(i).cutOutDoors();
+                frame1.getRooms()[i].cutOutDoors();
                 //before delete
-                for (int w = 0; w < frames.get(fr).getRooms().get(i).getExteriorWalls().length; w++) {
+                for (int w = 0; w < frame1.getRooms()[i].getExteriorWalls().length; w++) {
                     //lets see if this room has any walls that need to die
-                    if (frames.get(fr).getRooms().get(i).getExteriorWalls()[w].isKilled()) {
-                        frames.get(fr).getRooms().get(i).getExteriorWalls()[w] = new Spire(0, 0, 0, 0, 0, 0);
+                    if (frame1.getRooms()[i].getExteriorWalls()[w] == null) {
+                        frame1.getRooms()[i].getExteriorWalls()[w] = new Spire(0, 0, 0, 0, 0, 0);
                     }
                 }
             }
-
         }
 
         // 5 CP SKYBOX MIRRORING
         if (is5cp) {
+            System.out.println("now mirroring the map...");
             mirror();
         }
 
@@ -174,20 +179,21 @@ public class TF2MapGenerator {
                 if (i == e) {
                     //Then we would be checking if the current frame is intersecting itself.
                 } else {
-                    frames.get(i).cutOutDoors(frames.get(e).getX(), frames.get(e).getY(), frames.get(e).getZ(), frames.get(e).getXSize(), frames.get(e).getYSize(), frames.get(e).getZSize());
+                    frames.get(i).cutOutDoors(frames.get(e).getX(), frames.get(e).getY(), frames.get(e).getZ(), frames.get(e).getXs(), frames.get(e).getYs(), frames.get(e).getZs());
                 }
             }
         }
-        for (int fr = 0; fr < frames.size(); fr++) {
-            for (int i = 0; i < frames.get(fr).getFrameWallsSize(); i++) {
-                if (frames.get(fr).getFrameWalls().get(i).isKilled()) {
-                    frames.get(fr).getFrameWalls().remove(i);
+        for (Frame frame1 : frames) {
+            for (int i = 0; i < frame1.getFrameWallsSize(); i++) {
+                if (frame1.getFrameWalls().get(i).isKilled()) {
+                    frame1.getFrameWalls().remove(i);
                     i = i - 1;
                 }
             }
         }
 
         //BEGIN WRITE
+        System.out.println("Starting write-to-file...");
         write();
         System.out.println("\nProcess Complete!");
     }
@@ -230,20 +236,8 @@ public class TF2MapGenerator {
             for (int fr = 0; fr < frames.size(); fr++) {
                 writer.print(frames.get(fr).getOutput(id));
                 id = 44;  //number of skybox ids + 1
-                for (int i = 0; i < frames.get(fr).getSpireSize(); i++) {
-                    writer.print(frames.get(fr).getSpires().get(i).getOutput(id));
-                    id = id + 6;
-                }
-                for (int i = 0; i < frames.get(fr).getRampSize(); i++) {
-                    writer.print(frames.get(fr).getRamps().get(i).getOutput(id));
-                    id = id + 5;
-                }
-                for (int r = 0; r < frames.get(fr).getInclinesSize(); r++) {
-                    writer.print(frames.get(fr).getInclines().get(r).getOutput(id));
-                    id = id + 6;
-                }
-                for (int r = 0; r < frames.get(fr).getRoomsSize(); r++) {
-                    writer.print(frames.get(fr).getRooms().get(r).getOutput(id));
+                for (int i = 0; i < frames.get(fr).getComponentSize(); i++) {
+                    writer.print(frames.get(fr).getComponents()[i].getOutput(id));
                     id = id + 6;
                 }
             }
@@ -259,23 +253,22 @@ public class TF2MapGenerator {
             //ENTITY CREATION
             //
             //ROOM LIGHTS LOOP
-            for (int fr = 0; fr < frames.size(); fr++) {
-                for (int r = 0; r < frames.get(fr).getRoomsSize(); r++) {
-                    writer.print(frames.get(fr).getRooms().get(r).getLightOutput());
-                }
-            }
-            //Frame Lights Loop
-            for (int fr = 0; fr < frames.size(); fr++) {
-                for (int r = 0; r < frames.get(fr).getRoomsSize(); r++) {
-                    writer.print(frames.get(fr).getLightOutput());
-                }
-            }
-            for (int fr = 0; fr < frames.size(); fr++) {
-                for (int e = 0; e < frames.get(fr).getEntitiesSize(); e++) {
-                    writer.print(frames.get(fr).getEntities().get(e).getOutput());
-                }
-            }
-
+//            for (int fr = 0; fr < frames.size(); fr++) {
+//                for (int r = 0; r < frames.get(fr).getRoomsSize(); r++) {
+//                    writer.print(frames.get(fr).getRooms().get(r).getLightOutput());
+//                }
+//            }
+//            //Frame Lights Loop
+//            for (int fr = 0; fr < frames.size(); fr++) {
+//                for (int r = 0; r < frames.get(fr).getRoomsSize(); r++) {
+//                    writer.print(frames.get(fr).getLightOutput());
+//                }
+//            }
+//            for (int fr = 0; fr < frames.size(); fr++) {
+//                for (int e = 0; e < frames.get(fr).getEntitiesSize(); e++) {
+//                    writer.print(frames.get(fr).getEntities().get(e).getOutput());
+//                }
+//            }
             //This last write is just for single instance environmental entities
             writer.print("entity\n"
                     + "{\n"
@@ -408,42 +401,22 @@ public class TF2MapGenerator {
             if (fr != mapCenter) {
                 //This loop should be where detailing of red-blue sides should go
                 //make a new skybox rotated around the mapCenter skybox.
-                int newX = frames.get(mapCenter).getX() + (frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize() - (frames.get(fr).getX() + frames.get(fr).getXSize()));
-                int newY = frames.get(mapCenter).getY() + (frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize() - (frames.get(fr).getY() + frames.get(fr).getYSize()));
+                int newX = frames.get(mapCenter).getX() + (frames.get(mapCenter).getX() + frames.get(mapCenter).getXs() - (frames.get(fr).getX() + frames.get(fr).getXs()));
+                int newY = frames.get(mapCenter).getY() + (frames.get(mapCenter).getY() + frames.get(mapCenter).getYs() - (frames.get(fr).getY() + frames.get(fr).getYs()));
                 //mid + (mid - skyCoord)
+                //isFrame as opposed to isSkybox
                 if (frames.get(fr).isFrame()) {
-                    frames.add(new Frame(newX, newY, frames.get(fr).getZ(), frames.get(fr).getXSize(), frames.get(fr).getYSize(), frames.get(fr).getZSize()));
+                    System.out.println("Mirroring a frame");
+                    frames.add(new Frame(newX, newY, frames.get(fr).getZ(), frames.get(fr).getXs(), frames.get(fr).getYs(), frames.get(fr).getZs()));
                 } else {
-                    frames.add(new Skybox(newX, newY, frames.get(fr).getZ(), frames.get(fr).getXSize(), frames.get(fr).getYSize(), frames.get(fr).getZSize()));
+                    System.out.println("Mirroring a skybox");
+                    frames.add(new Skybox(newX, newY, frames.get(fr).getZ(), frames.get(fr).getXs(), frames.get(fr).getYs(), frames.get(fr).getZs()));
                 }
-                //We use frames.size() to get the last element in 'frames'
-                int initMirror = frames.get(fr).getSpireSize();
+                int initMirror = frames.get(fr).getComponentSize();
+                System.out.println("populating new container...");
                 for (int i = 0; i < initMirror; i++) {
-                    frames.get(frames.size() - 1).addSpire(frames.get(fr).getSpires().get(i).getMirror(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()));
-                }
-                initMirror = frames.get(fr).getRoomsSize();
-                for (int i = 0; i < initMirror; i++) {
-                    //get the mirrored walls, and the mirrored walls from any doors, the lights, and the interior walls
-                    frames.get(frames.size() - 1).addRoom(new Room(frames.get(fr).getRooms().get(i).getMirroredRoom(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()), frames.get(fr).getRooms().get(i).getMirroredDoor(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()), frames.get(fr).getRooms().get(i).getMirroredInterior(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()), frames.get(fr).getRooms().get(i).makeMirroredLight(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize(), frames.get(fr).getRooms().get(i).getLightBrightness())));
-                    //NOW we need to set the coordinates and thickness for the lights and mirroring to work in the future.
-                    frames.get(frames.size() - 1).getRooms().get(frames.get(frames.size() - 1).getRoomsSize() - 1).setX(frames.get(mapCenter).getX() + (frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize() - (frames.get(fr).getRooms().get(i).getX() + frames.get(fr).getRooms().get(i).getXs())));
-                    frames.get(frames.size() - 1).getRooms().get(frames.get(frames.size() - 1).getRoomsSize() - 1).setY(frames.get(mapCenter).getX() + (frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize() - (frames.get(fr).getRooms().get(i).getY() + frames.get(fr).getRooms().get(i).getYs())));
-                    frames.get(frames.size() - 1).getRooms().get(frames.get(frames.size() - 1).getRoomsSize() - 1).setZ(frames.get(fr).getRooms().get(i).getZ());
-                    frames.get(frames.size() - 1).getRooms().get(frames.get(frames.size() - 1).getRoomsSize() - 1).setXs(frames.get(fr).getRooms().get(i).getXs());
-                    frames.get(frames.size() - 1).getRooms().get(frames.get(frames.size() - 1).getRoomsSize() - 1).setYs(frames.get(fr).getRooms().get(i).getYs());
-                    frames.get(frames.size() - 1).getRooms().get(frames.get(frames.size() - 1).getRoomsSize() - 1).setZs(frames.get(fr).getRooms().get(i).getZs());
-                }
-                initMirror = frames.get(fr).getInclinesSize();
-                for (int i = 0; i < initMirror; i++) {
-                    frames.get(frames.size() - 1).addIncline(frames.get(fr).getInclines().get(i).getMirror(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()));
-                }
-                initMirror = frames.get(fr).getRampSize();
-                for (int i = 0; i < initMirror; i++) {
-                    frames.get(frames.size() - 1).addRamp(frames.get(fr).getRamps().get(i).getMirroredRamp(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()));
-                }
-                initMirror = frames.get(fr).getEntitiesSize();
-                for (int i = 0; i < initMirror; i++) {
-                    frames.get(frames.size() - 1).addEntity(frames.get(fr).getEntities().get(i).getMirroredEntity(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXSize(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYSize()));
+                    //now take everything inside and mirror it
+                    frames.get(frames.size() - 1).addDrawable(frames.get(fr).getComponents()[i].getMirror(frames.get(mapCenter).getX(), frames.get(mapCenter).getY(), frames.get(mapCenter).getX() + frames.get(mapCenter).getXs(), frames.get(mapCenter).getY() + frames.get(mapCenter).getYs()));
                 }
                 if (frames.get(fr).getMirrored()) {
                     frames.get(frames.size() - 1).setMirror();
@@ -452,30 +425,13 @@ public class TF2MapGenerator {
         }
 
         //ADD General MIRRORED OBJECTS
-        for (int fr = 0; fr < frames.size(); fr++) {
-            if (frames.get(fr).getMirrored()) {
-                int initMirror = frames.get(fr).getSpireSize();
-                for (int i = 0; i < initMirror; i++) {
-                    frames.get(fr).addSpire(frames.get(fr).getSpires().get(i).getMirror(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize()));
-                }
-                initMirror = frames.get(fr).getRoomsSize();
-                for (int i = 0; i < initMirror; i++) {
-                    //get the mirrored walls, and the mirrored walls from any doors, the interior walls, and the light
-                    frames.get(fr).addRoom(new Room(frames.get(fr).getRooms().get(i).getMirroredRoom(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize()), frames.get(fr).getRooms().get(i).getMirroredDoor(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize()), frames.get(fr).getRooms().get(i).getMirroredInterior(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize()), frames.get(fr).getRooms().get(i).makeMirroredLight(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize(), frames.get(fr).getRooms().get(i).getLightBrightness())));
-                }
-                initMirror = frames.get(fr).getInclinesSize();
-                for (int i = 0; i < initMirror; i++) {
-                    frames.get(fr).addIncline(frames.get(fr).getInclines().get(i).getMirror(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize()));
-                }
-                initMirror = frames.get(fr).getRampSize();
-                for (int i = 0; i < initMirror; i++) {
-                    frames.get(fr).addRamp(frames.get(fr).getRamps().get(i).getMirroredRamp(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize()));
-                }
-                initMirror = frames.get(fr).getEntitiesSize();
-                for (int i = 0; i < initMirror; i++) {
-                    frames.get(fr).addEntity(frames.get(fr).getEntities().get(i).getMirroredEntity(frames.get(fr).getX(), frames.get(fr).getY(), frames.get(fr).getX() + frames.get(fr).getXSize(), frames.get(fr).getY() + frames.get(fr).getYSize()));
-                }
-            }
+        System.out.println("Cleaning up mirroring...");
+        for (Frame frame : frames) {
+//            if (frame.getMirrored()) {
+//                for (int i = 0; i < frame.getComponentSize(); i++) {
+//                    frame.addDrawable(frame.getComponents()[i].getMirror(frame.getX(), frame.getY(), frame.getX() + frame.getXs(), frame.getY() + frame.getYs()));
+//                }
+//            }
         }
     }
 
@@ -543,7 +499,7 @@ public class TF2MapGenerator {
                 generatedFilename = args[2];
             } else {
                 loadPath = args[0];
-                generatedFilename = "tf2mapgenfile";
+                generatedFilename = loadPath.substring(loadPath.lastIndexOf("\\") + 1, loadPath.lastIndexOf("."));
             }
         } else {
             System.out.println("No build-file given, -h for help.");

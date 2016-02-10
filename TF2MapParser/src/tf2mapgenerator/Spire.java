@@ -1,6 +1,6 @@
 package tf2mapgenerator;
 
-public class Spire {
+public class Spire implements Drawable {
 
     private int xs, ys, zs;
     private int x, y, z;            //COORDINATES ==> bottom left corner
@@ -27,10 +27,12 @@ public class Spire {
         }
     }
 
-    public Spire getMirror(int xSky, int ySky, int xsSky, int ysSky) {
+    @Override
+    public Drawable getMirror(int xSky, int ySky, int xsSky, int ysSky) {
         return new Spire(xSky + (xsSky - (this.getX() + this.getXs())), ySky + (ysSky - (this.getY() + this.getYs())), this.getZ(), this.getXs(), this.getYs(), this.getZs());
     }
 
+    @Override
     public String getOutput(int id) {
         if (xs <= 0 || ys <= 0 || zs <= 0) {
             return "";  //DONT EVEN PARSE IT
@@ -221,28 +223,39 @@ public class Spire {
         }
     }
 
+    @Override
     public int getXs() {
         return xs;
     }
 
+    @Override
     public int getYs() {
         return ys;
     }
 
+    @Override
     public int getZs() {
         return zs;
     }
 
+    @Override
     public int getX() {
         return x;
     }
 
+    @Override
     public int getY() {
         return y;
     }
 
+    @Override
     public int getZ() {
         return z;
+    }
+    
+    @Override
+    public Type getType(){
+        return Type.SPIRE;
     }
 
     @Override

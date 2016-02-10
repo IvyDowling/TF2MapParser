@@ -18,14 +18,13 @@ public class Frame {
     private List<Spire> frameWalls = new ArrayList<>();
     private Light frameLight;
 
-    private List<Spire> spires = new ArrayList<>();
-    private List<Ramp> ramps = new ArrayList<>();
-    private List<Incline> inclines = new ArrayList<>();
-    private List<Room> rooms = new ArrayList<>();
-    private List<Entity> entities = new ArrayList<>();
-    private List<Point> points = new ArrayList<>();
+    private List<Drawable> components;
+    private List<Room> rooms;
+    private Drawable currentScope;
 
     public Frame(int xcoord, int ycoord, int zcoord, int l, int w, int h) {
+        components = new ArrayList<>();
+        rooms = new ArrayList<>();
         x = x0 = xcoord;
         y = y0 = ycoord;
         z = z0 = zcoord;
@@ -50,6 +49,10 @@ public class Frame {
 
     }
 
+    public Drawable getCurrentScope() {
+        return currentScope;
+    }
+
     public String getOutput(int id) {
         //gotta kill the walls we made doors in
         int i = 0;
@@ -69,7 +72,7 @@ public class Frame {
     }
 
     public String getLightOutput() {
-        return frameLight.getOutput();
+        return frameLight.getOutput(0);
     }
 
     public List<Spire> getFrameWalls() {
@@ -80,76 +83,33 @@ public class Frame {
         return frameWalls.size();
     }
 
-    public List<Spire> getSpires() {
-        return spires;
+    public Drawable[] getComponents() {
+        return components.toArray(new Drawable[components.size()]);
     }
 
-    public List<Ramp> getRamps() {
-        return ramps;
+    public int getComponentSize() {
+        return components.size();
     }
 
-    public List<Room> getRooms() {
-        return rooms;
-    }
-
-    public List<Incline> getInclines() {
-        return inclines;
-    }
-
-    public List<Entity> getEntities() {
-        return entities;
-    }
-
-    public List<Point> getPoints() {
-        return points;
-    }
-
-    public int getSpireSize() {
-        return spires.size();
-    }
-
-    public int getRampSize() {
-        return ramps.size();
+    public Room[] getRooms() {
+        if (!rooms.isEmpty()) {
+            return rooms.toArray(new Room[rooms.size()]);
+        } else {
+            return null;
+        }
     }
 
     public int getRoomsSize() {
         return rooms.size();
     }
 
-    public int getInclinesSize() {
-        return inclines.size();
+    public void addRoom(Room r) {
+        rooms.add(r);
     }
 
-    public int getEntitiesSize() {
-        return entities.size();
-    }
+    public void addDrawable(Drawable d) {
+        components.add(d);
 
-    public int getPointsSize() {
-        return points.size();
-    }
-
-    public void addSpire(Spire spire) {
-        spires.add(spire);
-    }
-
-    public void addRamp(Ramp ramp) {
-        ramps.add(ramp);
-    }
-
-    public void addRoom(Room room) {
-        rooms.add(room);
-    }
-
-    public void addIncline(Incline incline) {
-        inclines.add(incline);
-    }
-
-    public void addEntity(Entity res) {
-        entities.add(res);
-    }
-
-    public void addPoint(Point pt) {
-        points.add(pt);
     }
 
     //ENDING HERE
@@ -383,15 +343,15 @@ public class Frame {
         frameWalls.addAll(addThese);
     }
 
-    public int getXSize() {
+    public int getXs() {
         return xs;
     }
 
-    public int getYSize() {
+    public int getYs() {
         return ys;
     }
 
-    public int getZSize() {
+    public int getZs() {
         return zs;
     }
 

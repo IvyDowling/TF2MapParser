@@ -9,9 +9,9 @@ public class Room {
     private int x, y, z;
     private int dw;                 //thickness of walls
 
-    private Spire[] exterior = new Spire[6];
-    private ArrayList<Spire> croppedWalls;
-    private ArrayList<Spire> interior;
+    private Spire[] exterior;
+    private ArrayList<Drawable> croppedWalls;
+    private ArrayList<Drawable> interior;
     private ArrayList<Square> squares;
     private List<List<Door>> doors;
     private Light roomLight;
@@ -27,6 +27,7 @@ public class Room {
         doors.add(new ArrayList<Door>());
         doors.add(new ArrayList<Door>());
         doors.add(new ArrayList<Door>());
+        exterior = new Spire[6];
         x = xcoord;
         y = ycoord;
         z = zcoord;
@@ -53,43 +54,42 @@ public class Room {
 //        exterior[5] = (new Spire(x + dw, y, z + dw, xs0 - (2 * dw), dw, zs0 - (2 * dw))); // FRONT -y
     }
 
-    public Room(Spire[] walls, ArrayList<Spire> crops, ArrayList<Spire> interWalls, Light newLight) {
+    public Room(Spire[] walls, ArrayList<Drawable> crops, ArrayList<Drawable> interWalls, Light newLight) {
         exterior = walls;
         croppedWalls = crops;
         interior = interWalls;
         roomLight = newLight;
     }
 
-    public Spire[] getMirroredRoom(int xSky, int ySky, int xXs, int yYs) {
-        Spire[] mirroredRoom = new Spire[6];
+    public Drawable[] getMirroredRoom(int xSky, int ySky, int xXs, int yYs) {
+        Drawable[] mirroredRoom = new Spire[6];
         for (int i = 0; i < exterior.length; i++) {
             mirroredRoom[i] = (exterior[i].getMirror(xSky, ySky, xXs, yYs));
         }
         return mirroredRoom;
     }
 
-    public ArrayList<Spire> getMirroredDoor(int xSky, int ySky, int xXs, int yYs) {
-        ArrayList<Spire> crops = new ArrayList<>();
+    public ArrayList<Drawable> getMirroredDoor(int xSky, int ySky, int xXs, int yYs) {
+        ArrayList<Drawable> crops = new ArrayList<>();
         for (int i = 0; i < croppedWalls.size(); i++) {
             crops.add(croppedWalls.get(i).getMirror(xSky, ySky, xXs, yYs));
         }
         return crops;
     }
 
-    public ArrayList<Spire> getMirroredInterior(int xSky, int ySky, int xXs, int yYs) {
-        ArrayList<Spire> inter = new ArrayList<>();
+    public ArrayList<Drawable> getMirroredInterior(int xSky, int ySky, int xXs, int yYs) {
+        ArrayList<Drawable> inter = new ArrayList<>();
         for (int i = 0; i < interior.size(); i++) {
             inter.add(interior.get(i).getMirror(xSky, ySky, xXs, yYs));
         }
         return inter;
     }
 
-    public Spire[] getExteriorWalls() {
+    public Drawable[] getExteriorWalls() {
         return exterior;
     }
 
-    public List<Spire> getInteriorWalls() {
-        // not quite sure about that forward cast
+    public List<Drawable> getInteriorWalls() {
         return interior;
     }
 
@@ -152,7 +152,7 @@ public class Room {
             default:
                 return;
         }
-        exterior[theWall].kill();
+        exterior[theWall] = new Spire(0, 0, 0, 0, 0, 0);
         doors.get(theWall).add(new Door(xD, yD, xsD, ysD));
     }
 
@@ -256,32 +256,30 @@ public class Room {
         }
     }
 
-    public void deleteWall(String wall) {
-        wall = wall.trim().toLowerCase();
+    public void deleteWall(ThreeD wall) {
         switch (wall) {
-            case "+z":
-            case "up":
-                exterior[0].kill();
+            case Zpos:
+                exterior[0] = new Spire(0, 0, 0, 0, 0, 0);
                 break;
-            case "-z":
-            case "down":
-                exterior[1].kill();
+            case Zneg:
+                exterior[1] = new Spire(0, 0, 0, 0, 0, 0);
+                ;
                 break;
-            case "+x":
-            case "n":
-                exterior[2].kill();
+            case Xpos:
+                exterior[2] = new Spire(0, 0, 0, 0, 0, 0);
+                ;
                 break;
-            case "-x":
-            case "s":
-                exterior[3].kill();
+            case Xneg:
+                exterior[3] = new Spire(0, 0, 0, 0, 0, 0);
+                ;
                 break;
-            case "+y":
-            case "e":
-                exterior[4].kill();
+            case Ypos:
+                exterior[4] = new Spire(0, 0, 0, 0, 0, 0);
+                ;
                 break;
-            case "-y":
-            case "w":
-                exterior[5].kill();
+            case Yneg:
+                exterior[5] = new Spire(0, 0, 0, 0, 0, 0);
+                ;
                 break;
         }
     }
@@ -290,7 +288,7 @@ public class Room {
         int givenID = id;
         String out = "";
         for (int i = 0; i < exterior.length; i++) {
-            if (!exterior[i].isKilled()) {
+            if (exterior[i] != null) {
                 out += exterior[i].getOutput(givenID);
                 givenID = givenID + 7;        //there are 6 id hits in each spire
             }
@@ -314,7 +312,7 @@ public class Room {
     }
 
     public String getLightOutput() {
-        return roomLight.getOutput();
+        return roomLight.getOutput(0);
     }
 
     public int getLightBrightness() {
@@ -358,7 +356,6 @@ public class Room {
 
     public int getDw() {
         return dw;
-
     }
 
     public void setXs(int xs) {

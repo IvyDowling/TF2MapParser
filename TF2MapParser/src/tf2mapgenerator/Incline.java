@@ -1,13 +1,13 @@
 package tf2mapgenerator;
 
-public class Incline {
+public class Incline implements Drawable {
 
     private int zs, run, dw, l;
     private int x, y, z;            //COORDINATES ==> bottom left corner
-    private String direction;
+    private Compass direction;
 
-    public Incline(String direct, int xcoord, int ycoord, int zcoord, int r, int rn, int length, int thickness) {
-        direction = direct.trim().toLowerCase();
+    public Incline(Compass direct, int xcoord, int ycoord, int zcoord, int r, int rn, int length, int thickness) {
+        direction = direct;
         x = xcoord;
         y = ycoord;
         z = zcoord;
@@ -17,31 +17,12 @@ public class Incline {
         dw = thickness;
     }
 
-    public Incline getMirror(int xSky, int ySky, int xsSky, int ysSky) {
-        String newDirect = "";
-        switch (direction) {
-            case "+x":
-            case "n":
-                newDirect = "s";
-                return new Incline(newDirect, xSky + (xsSky - (x + l)), ySky + (ysSky - (y + run)), z, zs, run, l, dw);
-            case "-x":
-            case "s":
-                newDirect = "n";
-                return new Incline(newDirect, xSky + (xsSky - (x + l)), ySky + (ysSky - (y + run)), z, zs, run, l, dw);
-            case "+y":
-            case "e":
-                newDirect = "w";
-                return new Incline(newDirect, xSky + (xsSky - (x + run)), ySky + (ysSky - (y + l)), z, zs, run, l, dw);
-            case "-y":
-            case "w":
-                newDirect = "e";
-                return new Incline(newDirect, xSky + (xsSky - (x + run)), ySky + (ysSky - (y + l)), z, zs, run, l, dw);
-        }
-        //something got messed up
-        return null;
-
+    @Override
+    public Drawable getMirror(int xSky, int ySky, int xsSky, int ysSky) {
+        return new Incline(direction.invert180(), xSky + (xsSky - (x + l)), ySky + (ysSky - (y + run)), z, zs, run, l, dw);
     }
 
+    @Override
     public String getOutput(int id) {
         int ratio = Math.round(run / zs) * dw;
         if (dw <= 0 || run <= 0 || zs <= 0 || l <= 0 || ratio <= 0) {
@@ -54,7 +35,7 @@ public class Incline {
             z0 = z;
             int run0 = run;
             switch (direction) {
-                case "n":
+                case NORTH:
                     out = "solid\n"
                             + "	{\n"
                             + "		\"id\" \" " + id++ + "\"\n"
@@ -131,7 +112,7 @@ public class Incline {
                             + "			\"smoothing_groups\" \"0\"\n"
                             + "		}\n";
                     break;
-                case "s":
+                case SOUTH:
                     out = "solid\n"
                             + "	{\n"
                             + "		\"id\" \" " + id++ + "\"\n"
@@ -208,7 +189,7 @@ public class Incline {
                             + "			\"smoothing_groups\" \"0\"\n"
                             + "		}\n";
                     break;
-                case "e":
+                case EAST:
                     out = "solid\n"
                             + "	{\n"
                             + "		\"id\" \" " + id++ + "\"\n"
@@ -285,7 +266,7 @@ public class Incline {
                             + "			\"smoothing_groups\" \"0\"\n"
                             + "		}\n";
                     break;
-                case "w":
+                case WEST:
                     out = "solid\n"
                             + "	{\n"
                             + "		\"id\" \" " + id++ + "\"\n"
@@ -375,7 +356,8 @@ public class Incline {
         }
     }
 
-    public int getRise() {
+    @Override
+    public int getZs() {
         return zs;
     }
 
@@ -391,20 +373,46 @@ public class Incline {
         return l;
     }
 
+    @Override
     public int getX() {
         return x;
     }
 
+    @Override
     public int getY() {
         return y;
     }
 
+    @Override
     public int getZ() {
         return z;
     }
 
-    public String getDirection() {
+    @Override
+    public Type getType() {
+        return Type.INCLINE;
+    }
+
+    public Compass getDirection() {
         return direction;
+    }
+
+    @Override
+    public int getXs() {
+        if(direction == Compass.NORTH || direction == Compass.SOUTH){
+            return run;
+        } else {
+            return l;
+        }
+    }
+
+    @Override
+    public int getYs() {
+        if(direction == Compass.NORTH || direction == Compass.SOUTH){
+            return l;
+        } else {
+            return run;
+        }
     }
 
 }

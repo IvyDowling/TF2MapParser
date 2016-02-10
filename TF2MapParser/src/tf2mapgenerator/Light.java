@@ -1,26 +1,18 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package tf2mapgenerator;
 
-/**
- *
- * @author IV
- */
-public class Light {
+public class Light implements Drawable {
 
-    private int xl, yl, zl, brightness;
+    private int x, y, z, brightness;
 
     public Light(int lx, int ly, int lz, int bright) {
-        xl = lx;
-        yl = ly;
-        zl = lz;
+        x = lx;
+        y = ly;
+        z = lz;
         brightness = bright;
     }
 
-    public String getOutput() {
+    @Override
+    public String getOutput(int id) {
         return "\nentity\n"
                 + "{\n"
                 + "	\"id\" \"30\"\n"
@@ -29,7 +21,7 @@ public class Light {
                 + "	\"_lightHDR\" \"-1 -1 -1 1\"\n"
                 + "	\"_lightscaleHDR\" \"1\"\n"
                 + "	\"_quadratic_attn\" \"1\"\n"
-                + "	\"origin\" \"" + (xl) + " " + (yl) + " " + (zl) + "\"\n"
+                + "	\"origin\" \"" + (x) + " " + (y) + " " + (z) + "\"\n"
                 + "	editor\n"
                 + "	{\n"
                 + "		\"color\" \"220 30 220\"\n"
@@ -40,20 +32,48 @@ public class Light {
                 + "}";
     }
 
-    public int getXl() {
-        return xl;
+    @Override
+    public int getX() {
+        return x;
     }
 
-    public int getYl() {
-        return yl;
+    @Override
+    public int getY() {
+        return y;
     }
 
-    public int getZl() {
-        return zl;
+    @Override
+    public int getZ() {
+        return z;
+    }
+
+    @Override
+    public int getXs() {
+        return 0;
+    }
+
+    @Override
+    public int getYs() {
+        return 0;
+    }
+
+    @Override
+    public int getZs() {
+        return 0;
+    }
+
+    @Override
+    public Type getType() {
+        return Type.ENTITY;
     }
 
     public int getBrightness() {
         return brightness;
+    }
+
+    @Override
+    public Drawable getMirror(int xSky, int ySky, int xsSky, int ysSky) {
+        return new Light(xSky + (xsSky - (this.getX())), ySky + (ysSky - (this.getY())), this.getZ(), brightness);
     }
 
 }

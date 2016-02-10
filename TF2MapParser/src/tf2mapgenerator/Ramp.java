@@ -1,6 +1,6 @@
 package tf2mapgenerator;
 
-public class Ramp {
+public class Ramp implements Drawable {
 
     private int xs, ys, zs;
     private int x, y, z;
@@ -16,7 +16,8 @@ public class Ramp {
         direction = direct.trim().toLowerCase();//N-E-S-W
     }
 
-    public Ramp getMirroredRamp(int xSky, int ySky, int xsSky, int ysSky) {
+    @Override
+    public Drawable getMirror(int xSky, int ySky, int xsSky, int ysSky) {
         String newDirect = "";
         switch (direction) {
             case "n":
@@ -35,6 +36,7 @@ public class Ramp {
         return new Ramp(newDirect, xSky + (xsSky - (x + xs)), ySky + (ysSky - (y + ys)), z, xs, ys, zs);
     }
 
+    @Override
     public String getOutput(int id) {
         switch (direction) {
             case "n":
@@ -314,5 +316,40 @@ public class Ramp {
                 return "";
         }
 
+    }
+
+    @Override
+    public int getXs() {
+        return xs;
+    }
+
+    @Override
+    public int getYs() {
+        return ys;
+    }
+
+    @Override
+    public int getZs() {
+        return zs;
+    }
+
+    @Override
+    public int getX() {
+        return x;
+    }
+
+    @Override
+    public int getY() {
+        return y;
+    }
+
+    @Override
+    public int getZ() {
+        return z;
+    }
+    
+    @Override
+    public Type getType(){
+        return Type.RAMP;
     }
 }
